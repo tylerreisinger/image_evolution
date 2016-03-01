@@ -56,4 +56,16 @@ protected:
 
 State two_parent_crossover(const State& left, const State& right, int partition);
 
+template<typename Rng>
+State random_state(int size, Rng& rng) {
+    std::uniform_real_distribution<float> pt_distribution(0.0, 1.0);
+
+    State::StateVec pts(size);
+
+    std::generate_n(pts.begin(), size, 
+        [&pt_distribution, &rng](){return pt_distribution(rng);});
+
+    return State(std::move(pts));
+}
+
 #endif

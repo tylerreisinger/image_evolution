@@ -5,7 +5,10 @@
 #include <string>
 #include <cstdint>
 
+#include <QImage>
+
 #include "Color.h"
+
 
 class Image {
 public:
@@ -42,6 +45,8 @@ public:
     int pixel_count() const {return width()*height();}
 
     Image clone() const;
+
+    QImage to_qimage() const;
 
 private:
     Image() = default;

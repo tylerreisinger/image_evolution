@@ -135,17 +135,24 @@ float channel_distance(float channel1, float channel2)
  
 void save_image(const std::string& filename, const Image& image)
 {
-    QImage out_img(image.width(), image.height(), QImage::Format_RGB32);
+    auto out_img = image.to_qimage();
+    out_img.save(filename.c_str());
+}
+ 
+QImage Image::to_qimage() const
+{
+    QImage out_img(width(), height(), QImage::Format_RGB32);
     auto bytes = out_img.bits();
-    auto src_bytes = image.bytes();
+    auto src_bytes = m_bytes;
 
-    for(int px = 0; px < image.width()*image.height(); ++px) {
+    for(int px = 0; px < width()*height(); ++px) {
         for(int comp = 0; comp < 3; ++comp) {
             bytes[px*4+comp] = src_bytes[px*3+2-comp] * 255.0;
         }
         bytes[px*4+3] = 255;
 
     }
-    out_img.save(filename.c_str());
+
+    return out_img;
 }
  

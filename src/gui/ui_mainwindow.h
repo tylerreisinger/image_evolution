@@ -14,9 +14,12 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -28,7 +31,21 @@ class Ui_MainWindow
 public:
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
+    QLabel *generation_lbl;
     QGraphicsView *state_viewer;
+    QHBoxLayout *horizontalLayout_3;
+    QLabel *label_3;
+    QLabel *label_4;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *state_number_label;
+    QLabel *state_score_label;
+    QHBoxLayout *horizontalLayout;
+    QVBoxLayout *verticalLayout_2;
+    QPushButton *prev_state_button;
+    QPushButton *next_state_button;
+    QVBoxLayout *verticalLayout_3;
+    QPushButton *toggle_evolution_button;
+    QPushButton *next_generation_button;
     QMenuBar *menuBar;
     QStatusBar *statusBar;
 
@@ -43,10 +60,85 @@ public:
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        generation_lbl = new QLabel(centralWidget);
+        generation_lbl->setObjectName(QStringLiteral("generation_lbl"));
+
+        verticalLayout->addWidget(generation_lbl);
+
         state_viewer = new QGraphicsView(centralWidget);
         state_viewer->setObjectName(QStringLiteral("state_viewer"));
 
         verticalLayout->addWidget(state_viewer);
+
+        horizontalLayout_3 = new QHBoxLayout();
+        horizontalLayout_3->setSpacing(6);
+        horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
+        label_3 = new QLabel(centralWidget);
+        label_3->setObjectName(QStringLiteral("label_3"));
+
+        horizontalLayout_3->addWidget(label_3);
+
+        label_4 = new QLabel(centralWidget);
+        label_4->setObjectName(QStringLiteral("label_4"));
+
+        horizontalLayout_3->addWidget(label_4);
+
+
+        verticalLayout->addLayout(horizontalLayout_3);
+
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        state_number_label = new QLabel(centralWidget);
+        state_number_label->setObjectName(QStringLiteral("state_number_label"));
+
+        horizontalLayout_2->addWidget(state_number_label);
+
+        state_score_label = new QLabel(centralWidget);
+        state_score_label->setObjectName(QStringLiteral("state_score_label"));
+
+        horizontalLayout_2->addWidget(state_score_label);
+
+
+        verticalLayout->addLayout(horizontalLayout_2);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        prev_state_button = new QPushButton(centralWidget);
+        prev_state_button->setObjectName(QStringLiteral("prev_state_button"));
+
+        verticalLayout_2->addWidget(prev_state_button);
+
+        next_state_button = new QPushButton(centralWidget);
+        next_state_button->setObjectName(QStringLiteral("next_state_button"));
+
+        verticalLayout_2->addWidget(next_state_button);
+
+
+        horizontalLayout->addLayout(verticalLayout_2);
+
+        verticalLayout_3 = new QVBoxLayout();
+        verticalLayout_3->setSpacing(6);
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
+        toggle_evolution_button = new QPushButton(centralWidget);
+        toggle_evolution_button->setObjectName(QStringLiteral("toggle_evolution_button"));
+
+        verticalLayout_3->addWidget(toggle_evolution_button);
+
+        next_generation_button = new QPushButton(centralWidget);
+        next_generation_button->setObjectName(QStringLiteral("next_generation_button"));
+
+        verticalLayout_3->addWidget(next_generation_button);
+
+
+        horizontalLayout->addLayout(verticalLayout_3);
+
+
+        verticalLayout->addLayout(horizontalLayout);
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
@@ -65,6 +157,15 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        generation_lbl->setText(QApplication::translate("MainWindow", "TextLabel", 0));
+        label_3->setText(QApplication::translate("MainWindow", "Average Score:", 0));
+        label_4->setText(QApplication::translate("MainWindow", "Best Score:", 0));
+        state_number_label->setText(QApplication::translate("MainWindow", "State #/#", 0));
+        state_score_label->setText(QApplication::translate("MainWindow", "State Score", 0));
+        prev_state_button->setText(QApplication::translate("MainWindow", "Previous State", 0));
+        next_state_button->setText(QApplication::translate("MainWindow", "Next State", 0));
+        toggle_evolution_button->setText(QApplication::translate("MainWindow", "Start Evolution", 0));
+        next_generation_button->setText(QApplication::translate("MainWindow", "Next Generation", 0));
     } // retranslateUi
 
 };

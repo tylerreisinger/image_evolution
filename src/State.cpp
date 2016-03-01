@@ -1,7 +1,8 @@
 #include "State.h"
 
 State::State(const State& other):
-    m_state_vector(other.m_state_vector)
+    m_state_vector(other.m_state_vector),
+    m_score(other.m_score)
 {
 }
 

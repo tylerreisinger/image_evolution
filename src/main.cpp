@@ -7,6 +7,7 @@
 
 #include "ImageEvolver.h"
 #include "Image.h"
+#include "Population.h"
 
 int qt_main(int argc, char** argv) {
     QApplication a(argc, argv);
@@ -17,16 +18,19 @@ int qt_main(int argc, char** argv) {
 }
 
 int cmd_main(int argc, char** argv) {
-    auto ref_image = Image::load_image("../../reference_images/rainbow_ball_spiral.jpg");
+    auto ref_image = Image::load_image("../../reference_images/rygcbm-hexagon.png");
     std::cout << ref_image.height() << "x" << ref_image.width() << std::endl;
 
     save_image("ref.png", ref_image);
 
     ImageEvolver driver;
     driver.set_target_image(std::move(ref_image));
-    driver.initialize_random_population(40, 128);
 
-    for(int i = 0; i < 200; ++i) {
+    auto start_pop = make_random_fixed_size_population(40, 96, driver.get_rng());
+
+    driver.set_population(std::move(start_pop));
+
+    for(int i = 0; i < 1250; ++i) {
         std::cout << "=====Generation " << i << "=====" << std::endl;
         driver.advance_generation();
     }
@@ -35,10 +39,9 @@ int cmd_main(int argc, char** argv) {
 
     int i = 0;
     for(auto& state : driver.population()) {
-        auto img = driver.bg_image().clone();
         driver.print_state(std::cout, state);
 
-        driver.apply_state(state, img); 
+        auto img = driver.render_state(state); 
 
         std::stringstream filename;
         filename << "State" << i << ".png";
@@ -54,4 +57,5 @@ int cmd_main(int argc, char** argv) {
 
 int main(int argc, char** argv) {
     return qt_main(argc, argv);
+    //return cmd_main(argc, argv);
 }

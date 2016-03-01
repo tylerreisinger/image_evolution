@@ -14,15 +14,15 @@ public:
     Population(std::vector<State> states);
     ~Population() = default;
 
-    Population(const Population& other) = delete;
+    Population(const Population& other) = default;
     Population(Population&& other) noexcept;
-    Population& operator =(const Population& other) = delete;
+    Population& operator =(const Population& other) = default;
     Population& operator =(Population&& other) noexcept;
 
     State& operator [](std::size_t idx) {return m_states[idx];}
     const State& operator [](std::size_t idx) const {return m_states[idx];}
 
-    Population clone() {
+    Population clone() const {
         return Population(m_states);
     }
 
@@ -35,6 +35,8 @@ public:
     std::size_t size() const {
         return m_states.size();
     }
+
+    void sort_by_score();
 
     State* data() {return m_states.data();}
     const State* data() const {return m_states.data();}
@@ -51,5 +53,15 @@ public:
 protected:
     std::vector<State> m_states;
 };
+
+template<typename Rng>
+inline Population make_random_fixed_size_population(int pop_size, int state_size, Rng& rng) {
+    Population pop;
+    for(int n = 0; n < pop_size; ++n) {
+        auto& state = pop.add_state(random_state(state_size, rng));
+    }
+
+    return pop;
+}
 
 #endif

@@ -46,18 +46,6 @@ void ImageEvolver::apply_state(const State& state, Image& image) const
     }
 }
  
-State ImageEvolver::random_state(int num_elems, GeneratorType& rng)
-{
-    std::uniform_real_distribution<float> pt_distribution(0.0, 1.0);
-
-    State::StateVec pts(num_elems);
-
-    std::generate_n(pts.begin(), num_elems, 
-        [&pt_distribution, &rng](){return pt_distribution(rng);});
-
-    return State(std::move(pts));
-}
-
 State& ImageEvolver::mutate_state(State& state, double elem_mutate_probability)
 {
     std::uniform_real_distribution<float> prob_dist(0.0, 1.0);
@@ -72,24 +60,21 @@ State& ImageEvolver::mutate_state(State& state, double elem_mutate_probability)
     return state;
 }
  
-void ImageEvolver::set_population(std::vector<State> new_population)
+void ImageEvolver::set_population(Population new_population)
 {
     m_population = std::move(new_population);
+    update_scores(m_population);
+    m_population.sort_by_score();
     m_gen_number = 0;
 }
  
-void ImageEvolver::initialize_random_population(int num_states, int state_size)
+Image ImageEvolver::render_state(const State& state)
 {
-    m_population.clear();
-    m_gen_number = 0;
+    auto out_img = m_bg_image->clone();
 
-    for(int n = 0; n < num_states; ++n) {
-        auto& state = m_population.add_state(random_state(state_size, m_rng));
-        auto score = score_state(state);
-        state.set_score(score);
-    } 
+    apply_state(state, out_img);
+    return out_img;
 }
- 
  
 void ImageEvolver::print_state(std::ostream& stream, const State& state)
 {
@@ -155,6 +140,7 @@ void ImageEvolver::advance_generation()
     update_scores(total_pop);
 
     Population new_pop = select_survivors(total_pop, 2);
+    new_pop.sort_by_score();
 
     m_population = std::move(new_pop);
     m_gen_number += 1;

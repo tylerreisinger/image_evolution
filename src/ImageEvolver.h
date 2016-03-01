@@ -33,16 +33,15 @@ public:
 
     std::size_t population_size() const {return m_population.size();}
 
-    State::ScoreType score_state(const State& state) const;
-    void apply_state(const State& state, Image& image) const;
+    int generation_number() const {return m_gen_number;}
 
-    State random_state(int num, GeneratorType& generator);
+    State::ScoreType score_state(const State& state) const;
 
     State& mutate_state(State& state, double elem_mutate_probability);
 
-    void set_population(std::vector<State> new_population);
+    void set_population(Population new_population);
 
-    void initialize_random_population(int num_states, int state_size);
+    Image render_state(const State& state);
 
     void print_state(std::ostream& stream, const State& state);
 
@@ -54,6 +53,8 @@ public:
 
     State::ScoreType compute_total_score();
 
+    GeneratorType& get_rng() {return m_rng;}
+
 protected:
     std::vector<ScoreType> compute_rel_scores(ScoreType total_score);
     void update_scores(Population& pop);
@@ -61,6 +62,7 @@ protected:
     State& select_parent(const std::vector<ScoreType>& rel_scores,
             ScoreType select_pos);
     Population select_survivors(Population& total_pop, int n_way);
+    void apply_state(const State& state, Image& image) const;
 
     Population m_population;
     int m_gen_number = 0;
@@ -68,7 +70,7 @@ protected:
 
     std::unique_ptr<Image> m_target_image;
     std::unique_ptr<Image> m_bg_image;
-    mutable std::default_random_engine m_rng;
+    mutable GeneratorType m_rng;
 };
 
 #endif

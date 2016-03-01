@@ -17,3 +17,4 @@ set(PROJECT_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
 target_link_libraries(image_evolution Qt5::Widgets)
 target_link_libraries(image_evolution Qt5::Gui)
+target_link_libraries(image_evolution pthread)
