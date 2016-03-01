@@ -6,6 +6,8 @@
 
 #include <QGraphicsPixmapItem>
 #include <QPixmap>
+#include <QFileDialog>
+#include <QMessageBox>
 
 #include "EvolutionDriver.h"
 
@@ -99,6 +101,10 @@ void MainWindow::setup_signals()
 
     connect(ui->toggle_evolution_button, &QPushButton::clicked,
             this, &MainWindow::evolution_toggle_clicked);
+
+    //Context menu
+    connect(ui->action_Save_Current_State, &QAction::triggered,
+            this, &MainWindow::on_save_state_image);
 }
  
 void MainWindow::next_state_clicked()
@@ -177,5 +183,28 @@ void MainWindow::population_updated()
 
     state_updated();
     update_gfx();
+}
+ 
+void MainWindow::handle_save_state_image()
+{
+    auto selected_state = m_display_pop[m_display_state_idx];
+    auto filename = QFileDialog::getSaveFileName(this, "Save State Image", ".", 
+            "Image Files (*.png *.bmp *.jpg)").toStdString();
+
+    if(!filename.empty()) {
+        auto img = m_driver->evolver().render_state(selected_state);
+
+        if(!save_image(filename, img)) {
+            QMessageBox msg;
+            auto message = "Unable to save file '" + filename + "'.";
+            msg.setText(message.c_str());
+            msg.exec();
+        }
+    }
+}
+ 
+void MainWindow::on_save_state_image(bool)
+{
+    handle_save_state_image(); 
 }
  

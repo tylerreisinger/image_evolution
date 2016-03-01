@@ -133,10 +133,10 @@ float channel_distance(float channel1, float channel2)
     return diff*diff; 
 }
  
-void save_image(const std::string& filename, const Image& image)
+bool save_image(const std::string& filename, const Image& image)
 {
     auto out_img = image.to_qimage();
-    out_img.save(filename.c_str());
+    return out_img.save(filename.c_str());
 }
  
 QImage Image::to_qimage() const

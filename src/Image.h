@@ -59,6 +59,6 @@ float image_difference(const Image& ref_image, const Image& test_image);
 
 float channel_distance(float channel1, float channel2);
 
-void save_image(const std::string& filename, const Image& image);
+bool save_image(const std::string& filename, const Image& image);
 
 #endif

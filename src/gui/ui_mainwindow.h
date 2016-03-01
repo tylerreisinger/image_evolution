@@ -18,6 +18,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
@@ -29,6 +30,7 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *action_Save_Current_State;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QLabel *generation_lbl;
@@ -47,6 +49,7 @@ public:
     QPushButton *toggle_evolution_button;
     QPushButton *next_generation_button;
     QMenuBar *menuBar;
+    QMenu *menu_File;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -54,6 +57,8 @@ public:
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(1024, 800);
+        action_Save_Current_State = new QAction(MainWindow);
+        action_Save_Current_State->setObjectName(QStringLiteral("action_Save_Current_State"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -144,10 +149,15 @@ public:
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 1024, 26));
+        menu_File = new QMenu(menuBar);
+        menu_File->setObjectName(QStringLiteral("menu_File"));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
+
+        menuBar->addAction(menu_File->menuAction());
+        menu_File->addAction(action_Save_Current_State);
 
         retranslateUi(MainWindow);
 
@@ -157,6 +167,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        action_Save_Current_State->setText(QApplication::translate("MainWindow", "&Save Current State", 0));
         generation_lbl->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));
         best_score_label->setText(QApplication::translate("MainWindow", "Best Score:", 0));
@@ -166,6 +177,7 @@ public:
         next_state_button->setText(QApplication::translate("MainWindow", "Next State", 0));
         toggle_evolution_button->setText(QApplication::translate("MainWindow", "Start Evolution", 0));
         next_generation_button->setText(QApplication::translate("MainWindow", "Next Generation", 0));
+        menu_File->setTitle(QApplication::translate("MainWindow", "&File", 0));
     } // retranslateUi
 
 };

@@ -40,6 +40,9 @@ private:
     void state_updated();
     void population_updated();
 
+    void on_save_state_image(bool);
+    void handle_save_state_image();
+
     std::unique_ptr<EvolutionDriver> initialize_evolution();
 
     Ui::MainWindow* ui; 
