@@ -113,11 +113,11 @@ void ImageEvolver::advance_generation()
     auto total_score = compute_total_score();
     auto rel_scores = compute_rel_scores(total_score);
 
-    std::cout << "Total Score: " << total_score << std::endl;
+    //std::cout << "Total Score: " << total_score << std::endl;
 
-    for(int i = 0; i < rel_scores.size(); ++i) {
-        std::cout << i << ": " << rel_scores[i] << std::endl;
-    }
+    //for(int i = 0; i < rel_scores.size(); ++i) {
+    //    std::cout << i << ": " << rel_scores[i] << std::endl;
+    //}
 
     std::uniform_real_distribution<ScoreType> parent_pos_dist(0.0, 1.0);
     std::uniform_int_distribution<int> partition_dist(0, m_population[0].size()-1);

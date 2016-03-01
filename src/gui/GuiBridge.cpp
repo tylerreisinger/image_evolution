@@ -12,13 +12,9 @@ GuiBridge::GuiBridge(std::unique_ptr<EvolutionDriver> driver):
  
 GuiBridge::~GuiBridge()
 {
-    std::cout << "Quitting..." << std::endl;
     if(m_evolver_thread.joinable()) {
-        std::cout << "Halt..." << std::endl;
         stop();
-        std::cout << "Halted" << std::endl;
         m_evolver_thread.join(); 
-        std::cout << "Joined" << std::endl;
     }
 }
  
@@ -75,8 +71,6 @@ int GuiBridge::cur_generation() const
 void GuiBridge::thread_func()
 {
     while(true) {
-        std::cout << "Loop iter start" << std::endl;
-
         {
             std::unique_lock<std::mutex> lck(m_progress_mutex);
 
@@ -87,10 +81,8 @@ void GuiBridge::thread_func()
                 m_proceed_cv.wait(lck);
             }
 
-            std::cout << "Passed the lock" << std::endl;
             m_step = false;
             if(m_quit) {
-                std::cout << "Quitting now" << std::endl;
                 break;
             }
             if(m_run) {
@@ -99,7 +91,6 @@ void GuiBridge::thread_func()
         }
         
         next_generation();
-        std::cout << "Loop iter end" << std::endl;
     }
 }
  

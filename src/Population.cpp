@@ -32,3 +32,11 @@ void Population::sort_by_score()
         });
 }
  
+State::ScoreType Population::total_score() const
+{
+    return std::accumulate(begin(), end(), 0.0, 
+        [](State::ScoreType sum, const State& s) {
+            return sum + s.score();
+        });
+}
+ 

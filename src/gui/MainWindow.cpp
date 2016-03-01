@@ -165,6 +165,16 @@ void MainWindow::population_updated()
     
     ui->generation_lbl->setText(generation_text.str().c_str());
 
+    auto avg_score = m_display_pop.total_score() / m_display_pop.size();
+
+    std::stringstream avg_score_text;
+    avg_score_text << "Average Score: " << avg_score;
+    ui->average_score_label->setText(avg_score_text.str().c_str());
+
+    std::stringstream best_score_text;
+    best_score_text << "Best Score: " << m_display_pop[0].score();
+    ui->best_score_label->setText(best_score_text.str().c_str());
+
     state_updated();
     update_gfx();
 }

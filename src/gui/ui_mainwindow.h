@@ -34,8 +34,8 @@ public:
     QLabel *generation_lbl;
     QGraphicsView *state_viewer;
     QHBoxLayout *horizontalLayout_3;
-    QLabel *label_3;
-    QLabel *label_4;
+    QLabel *average_score_label;
+    QLabel *best_score_label;
     QHBoxLayout *horizontalLayout_2;
     QLabel *state_number_label;
     QLabel *state_score_label;
@@ -73,15 +73,15 @@ public:
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setSpacing(6);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
-        label_3 = new QLabel(centralWidget);
-        label_3->setObjectName(QStringLiteral("label_3"));
+        average_score_label = new QLabel(centralWidget);
+        average_score_label->setObjectName(QStringLiteral("average_score_label"));
 
-        horizontalLayout_3->addWidget(label_3);
+        horizontalLayout_3->addWidget(average_score_label);
 
-        label_4 = new QLabel(centralWidget);
-        label_4->setObjectName(QStringLiteral("label_4"));
+        best_score_label = new QLabel(centralWidget);
+        best_score_label->setObjectName(QStringLiteral("best_score_label"));
 
-        horizontalLayout_3->addWidget(label_4);
+        horizontalLayout_3->addWidget(best_score_label);
 
 
         verticalLayout->addLayout(horizontalLayout_3);
@@ -158,8 +158,8 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         generation_lbl->setText(QApplication::translate("MainWindow", "TextLabel", 0));
-        label_3->setText(QApplication::translate("MainWindow", "Average Score:", 0));
-        label_4->setText(QApplication::translate("MainWindow", "Best Score:", 0));
+        average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));
+        best_score_label->setText(QApplication::translate("MainWindow", "Best Score:", 0));
         state_number_label->setText(QApplication::translate("MainWindow", "State #/#", 0));
         state_score_label->setText(QApplication::translate("MainWindow", "State Score", 0));
         prev_state_button->setText(QApplication::translate("MainWindow", "Previous State", 0));

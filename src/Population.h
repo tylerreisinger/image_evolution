@@ -38,6 +38,8 @@ public:
 
     void sort_by_score();
 
+    State::ScoreType total_score() const;
+
     State* data() {return m_states.data();}
     const State* data() const {return m_states.data();}
 
