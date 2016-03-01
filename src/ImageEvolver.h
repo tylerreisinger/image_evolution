@@ -1,5 +1,5 @@
-#ifndef EVOLUTIONDRIVER_H_
-#define EVOLUTIONDRIVER_H_
+#ifndef IMAGEEVOLVER_H_
+#define IMAGEEVOLVER_H_
 
 #include <vector>
 #include <memory>
@@ -10,7 +10,7 @@
 #include "Population.h"
 #include "Color.h"
 
-class EvolutionDriver {
+class ImageEvolver {
 public:
     using GeneratorType = std::default_random_engine;
     using ScoreType = State::ScoreType;
@@ -19,14 +19,14 @@ public:
     static constexpr int POINTS_PER_COLOR = 4;
     static constexpr int POINTS_PER_ELEM = POINTS_PER_GEOM + POINTS_PER_COLOR;
 
-    EvolutionDriver();
-    EvolutionDriver(Population initial_population);
-    ~EvolutionDriver() = default;
+    ImageEvolver();
+    ImageEvolver(Population initial_population);
+    ~ImageEvolver() = default;
 
-    EvolutionDriver(const EvolutionDriver& other) = delete;
-    EvolutionDriver(EvolutionDriver&& other) noexcept = delete;
-    EvolutionDriver& operator =(const EvolutionDriver& other) = delete;
-    EvolutionDriver& operator =(EvolutionDriver&& other) noexcept = delete;
+    ImageEvolver(const ImageEvolver& other) = delete;
+    ImageEvolver(ImageEvolver&& other) noexcept = delete;
+    ImageEvolver& operator =(const ImageEvolver& other) = delete;
+    ImageEvolver& operator =(ImageEvolver&& other) noexcept = delete;
 
     Population& population() {return m_population;}
     const Population& population() const {return m_population;}
@@ -45,7 +45,6 @@ public:
     void initialize_random_population(int num_states, int state_size);
 
     void print_state(std::ostream& stream, const State& state);
-
 
     void advance_generation();
 

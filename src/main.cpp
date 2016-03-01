@@ -3,9 +3,9 @@
 
 #include <QApplication>
 
-#include "MainWindow.h"
+#include "gui/MainWindow.h"
 
-#include "EvolutionDriver.h"
+#include "ImageEvolver.h"
 #include "Image.h"
 
 int qt_main(int argc, char** argv) {
@@ -16,13 +16,13 @@ int qt_main(int argc, char** argv) {
     return a.exec();
 }
 
-int main(int argc, char** argv) {
+int cmd_main(int argc, char** argv) {
     auto ref_image = Image::load_image("../../reference_images/rainbow_ball_spiral.jpg");
     std::cout << ref_image.height() << "x" << ref_image.width() << std::endl;
 
     save_image("ref.png", ref_image);
 
-    EvolutionDriver driver;
+    ImageEvolver driver;
     driver.set_target_image(std::move(ref_image));
     driver.initialize_random_population(40, 128);
 
@@ -50,4 +50,8 @@ int main(int argc, char** argv) {
     }
 
     return 0;
+}
+
+int main(int argc, char** argv) {
+    return qt_main(argc, argv);
 }

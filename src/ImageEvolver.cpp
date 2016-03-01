@@ -1,25 +1,25 @@
-#include "EvolutionDriver.h"
+#include "ImageEvolver.h"
 
 #include <iostream>
 #include <numeric>
 
-EvolutionDriver::EvolutionDriver()
+ImageEvolver::ImageEvolver()
 {
 }
  
-EvolutionDriver::EvolutionDriver(Population initial_population):
+ImageEvolver::ImageEvolver(Population initial_population):
     m_population(std::move(initial_population)) {
      
 }
  
-State::ScoreType EvolutionDriver::score_state(const State& state) const
+State::ScoreType ImageEvolver::score_state(const State& state) const
 {
     auto img_copy = m_bg_image->clone();
     apply_state(state, img_copy);
     return image_difference(*m_target_image, img_copy);
 }
  
-void EvolutionDriver::apply_state(const State& state, Image& image) const
+void ImageEvolver::apply_state(const State& state, Image& image) const
 {
     auto& points = state.points();
 
@@ -46,7 +46,7 @@ void EvolutionDriver::apply_state(const State& state, Image& image) const
     }
 }
  
-State EvolutionDriver::random_state(int num_elems, GeneratorType& rng)
+State ImageEvolver::random_state(int num_elems, GeneratorType& rng)
 {
     std::uniform_real_distribution<float> pt_distribution(0.0, 1.0);
 
@@ -58,7 +58,7 @@ State EvolutionDriver::random_state(int num_elems, GeneratorType& rng)
     return State(std::move(pts));
 }
 
-State& EvolutionDriver::mutate_state(State& state, double elem_mutate_probability)
+State& ImageEvolver::mutate_state(State& state, double elem_mutate_probability)
 {
     std::uniform_real_distribution<float> prob_dist(0.0, 1.0);
     std::uniform_real_distribution<float> value_dist(0.0, 1.0);
@@ -72,13 +72,13 @@ State& EvolutionDriver::mutate_state(State& state, double elem_mutate_probabilit
     return state;
 }
  
-void EvolutionDriver::set_population(std::vector<State> new_population)
+void ImageEvolver::set_population(std::vector<State> new_population)
 {
     m_population = std::move(new_population);
     m_gen_number = 0;
 }
  
-void EvolutionDriver::initialize_random_population(int num_states, int state_size)
+void ImageEvolver::initialize_random_population(int num_states, int state_size)
 {
     m_population.clear();
     m_gen_number = 0;
@@ -91,7 +91,7 @@ void EvolutionDriver::initialize_random_population(int num_states, int state_siz
 }
  
  
-void EvolutionDriver::print_state(std::ostream& stream, const State& state)
+void ImageEvolver::print_state(std::ostream& stream, const State& state)
 {
     if(state.has_score()) {
         stream << state.score() << " -- ";
@@ -106,7 +106,7 @@ void EvolutionDriver::print_state(std::ostream& stream, const State& state)
     stream << "]";
 }
  
-State& EvolutionDriver::select_parent(const std::vector<ScoreType>& rel_scores, 
+State& ImageEvolver::select_parent(const std::vector<ScoreType>& rel_scores, 
         ScoreType select_pos)
 {
     ScoreType sum = 0.0;
@@ -120,7 +120,7 @@ State& EvolutionDriver::select_parent(const std::vector<ScoreType>& rel_scores,
     return m_population.back();
 }
  
-void EvolutionDriver::advance_generation()
+void ImageEvolver::advance_generation()
 {
     int offspring_count = population_size();
 
@@ -160,13 +160,13 @@ void EvolutionDriver::advance_generation()
     m_gen_number += 1;
 }
  
-void EvolutionDriver::set_target_image(Image target_image)
+void ImageEvolver::set_target_image(Image target_image)
 {
     m_target_image = std::make_unique<Image>(std::move(target_image)); 
     set_bg_image();
 }
  
-State::ScoreType EvolutionDriver::compute_total_score()
+State::ScoreType ImageEvolver::compute_total_score()
 {
     auto total_score = std::accumulate(m_population.begin(), m_population.end(), 0.0,
         [](double& sum, const State& state) {
@@ -177,7 +177,7 @@ State::ScoreType EvolutionDriver::compute_total_score()
 }
  
  
-std::vector<State::ScoreType> EvolutionDriver::compute_rel_scores(
+std::vector<State::ScoreType> ImageEvolver::compute_rel_scores(
         State::ScoreType total_score)
 {
     std::vector<State::ScoreType> rel_scores(population_size());
@@ -197,7 +197,7 @@ std::vector<State::ScoreType> EvolutionDriver::compute_rel_scores(
     return std::move(rel_scores);
 }
  
-void EvolutionDriver::update_scores(Population& pop)
+void ImageEvolver::update_scores(Population& pop)
 {
     for(auto& state : pop) {
         if(!state.has_score()) {
@@ -206,14 +206,14 @@ void EvolutionDriver::update_scores(Population& pop)
     }
 }
  
-void EvolutionDriver::set_bg_image()
+void ImageEvolver::set_bg_image()
 {
     auto image = std::make_unique<Image>(m_target_image->width(), m_target_image->height(),
             m_bg_color);
     m_bg_image = std::move(image);
 }
  
-Population EvolutionDriver::select_survivors(Population& total_pop, int n_way)
+Population ImageEvolver::select_survivors(Population& total_pop, int n_way)
 {
     Population new_pop;
     std::shuffle(total_pop.begin(), total_pop.end(), m_rng);
