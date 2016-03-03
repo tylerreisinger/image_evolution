@@ -15,8 +15,8 @@ ImageEvolver::ImageEvolver(Population initial_population):
 State::ScoreType ImageEvolver::score_state(const State& state) const
 {
     auto img_copy = m_bg_image->clone();
-    apply_state(state, img_copy);
-    return image_difference(*m_target_image, img_copy);
+    apply_state(state, *img_copy);
+    return image_difference(*m_target_image, *img_copy);
 }
  
 void ImageEvolver::apply_state(const State& state, Image& image) const
@@ -68,11 +68,11 @@ void ImageEvolver::set_population(Population new_population)
     m_gen_number = 0;
 }
  
-Image ImageEvolver::render_state(const State& state)
+std::unique_ptr<Image> ImageEvolver::render_state(const State& state)
 {
     auto out_img = m_bg_image->clone();
 
-    apply_state(state, out_img);
+    apply_state(state, *out_img);
     return out_img;
 }
  
@@ -146,9 +146,9 @@ void ImageEvolver::advance_generation()
     m_gen_number += 1;
 }
  
-void ImageEvolver::set_target_image(Image target_image)
+void ImageEvolver::set_target_image(std::unique_ptr<Image> target_image)
 {
-    m_target_image = std::make_unique<Image>(std::move(target_image)); 
+    m_target_image = std::move(target_image); 
     set_bg_image();
 }
  

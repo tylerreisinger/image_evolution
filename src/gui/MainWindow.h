@@ -23,7 +23,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void set_target_image(Image image);
+    void set_target_image(std::unique_ptr<Image> image);
 
 
     void advance_generation();
@@ -45,9 +45,9 @@ private:
     void on_save_state_image(bool);
     void handle_save_state_image();
 
-    void reset_evolution(Image new_image);
+    void reset_evolution(std::unique_ptr<Image> new_image);
 
-    std::unique_ptr<EvolutionDriver> initialize_evolution(Image image);
+    std::unique_ptr<EvolutionDriver> initialize_evolution(std::unique_ptr<Image> image);
 
     Ui::MainWindow* ui; 
     std::unique_ptr<QGraphicsScene> m_gfx_scene;

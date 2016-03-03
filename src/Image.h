@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <memory>
 
 #include <QImage>
 
@@ -27,8 +28,8 @@ public:
     float& operator [](std::size_t idx) {return m_bytes[idx];}
     const float& operator [](std::size_t idx) const {return m_bytes[idx];}
 
-    static Image load_image(const std::string& filename, const Colorf& bg_color
-            = Colorf(1.0, 1.0, 1.0, 1.0));
+    static std::unique_ptr<Image> load_image(const std::string& filename,
+            const Colorf& bg_color = Colorf(1.0, 1.0, 1.0, 1.0));
 
     void draw_rectangle(int x_min, int y_min, int x_max, int y_max, 
             const Colorf& src_color);
@@ -44,7 +45,7 @@ public:
 
     int pixel_count() const {return width()*height();}
 
-    Image clone() const;
+    std::unique_ptr<Image> clone() const;
 
     QImage to_qimage() const;
 

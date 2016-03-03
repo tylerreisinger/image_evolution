@@ -17,7 +17,7 @@ public:
     EvolutionDriver& operator =(const EvolutionDriver& other) = delete;
     EvolutionDriver& operator =(EvolutionDriver&& other) noexcept = delete;
 
-    void set_target_image(Image target_image);
+    void set_target_image(std::unique_ptr<Image> target_image);
 
     const Population& population() const {return m_evolver->population();}
 

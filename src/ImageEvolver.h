@@ -41,13 +41,13 @@ public:
 
     void set_population(Population new_population);
 
-    Image render_state(const State& state);
+    std::unique_ptr<Image> render_state(const State& state);
 
     void print_state(std::ostream& stream, const State& state);
 
     void advance_generation();
 
-    void set_target_image(Image target_image);
+    void set_target_image(std::unique_ptr<Image> target_image);
     const Image& target_image() const {return *m_target_image;}
     const Image& bg_image() const {return *m_bg_image;}
 

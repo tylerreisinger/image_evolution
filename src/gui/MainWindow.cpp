@@ -36,11 +36,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(Image image)
+std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(
+        std::unique_ptr<Image> image)
 {
     auto driver = std::make_unique<EvolutionDriver>();
 
-    m_target_image = std::make_unique<Image>(std::move(image));
+    m_target_image = std::move(image);
 
     driver->set_target_image(m_target_image->clone());
 
@@ -51,7 +52,7 @@ std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(Image image)
     return driver;
 }
  
-void MainWindow::set_target_image(Image image)
+void MainWindow::set_target_image(std::unique_ptr<Image> image)
 {
     reset_evolution(std::move(image));
 }
@@ -67,7 +68,7 @@ void MainWindow::update_gfx()
     
     auto state_render = m_driver->evolver().render_state(draw_state); 
 
-    QImage state_img = state_render.to_qimage();
+    QImage state_img = state_render->to_qimage();
 
     m_state_render->setPixmap(QPixmap::fromImage(state_img));
 }
@@ -185,7 +186,7 @@ void MainWindow::handle_save_state_image()
     if(!filename.empty()) {
         auto img = m_driver->evolver().render_state(selected_state);
 
-        if(!save_image(filename, img)) {
+        if(!save_image(filename, *img)) {
             QMessageBox msg;
             auto message = "Unable to save file '" + filename + "'.";
             msg.setText(message.c_str());
@@ -211,7 +212,7 @@ void MainWindow::on_save_state_image(bool)
     handle_save_state_image(); 
 }
  
-void MainWindow::reset_evolution(Image new_image)
+void MainWindow::reset_evolution(std::unique_ptr<Image> new_image)
 {
     if(m_bridge != nullptr) {
         m_bridge->stop();

@@ -19,9 +19,9 @@ int qt_main(int argc, char** argv) {
 
 int cmd_main(int argc, char** argv) {
     auto ref_image = Image::load_image("../../reference_images/rygcbm-hexagon.png");
-    std::cout << ref_image.height() << "x" << ref_image.width() << std::endl;
+    std::cout << ref_image->height() << "x" << ref_image->width() << std::endl;
 
-    save_image("ref.png", ref_image);
+    save_image("ref.png", *ref_image);
 
     ImageEvolver driver;
     driver.set_target_image(std::move(ref_image));
@@ -46,7 +46,7 @@ int cmd_main(int argc, char** argv) {
         std::stringstream filename;
         filename << "State" << i << ".png";
 
-        save_image(filename.str(), img);
+        save_image(filename.str(), *img);
 
         std::cout << "\n";
         ++i;

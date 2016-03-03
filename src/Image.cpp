@@ -35,9 +35,13 @@ Image& Image::operator=(Image&& other) noexcept
     return *this;
 }
  
-Image Image::load_image(const std::string& filename, const Colorf& bg_color) {
+std::unique_ptr<Image> Image::load_image(const std::string& filename,
+        const Colorf& bg_color) {
     QImage image;
-    image.load(filename.c_str());
+
+    if(!image.load(filename.c_str())) {
+        return nullptr; 
+    }
     
     image = image.convertToFormat(QImage::Format_ARGB32);
     auto image_data = image.constBits();
@@ -57,7 +61,7 @@ Image Image::load_image(const std::string& filename, const Colorf& bg_color) {
         }
     }
 
-    return Image(std::move(pixels), image.width(), image.height()); 
+    return std::make_unique<Image>(std::move(pixels), image.width(), image.height()); 
 }
 
 void Image::draw_rectangle(int x_min, int y_min, int x_max, int y_max,
@@ -91,12 +95,12 @@ void Image::draw_rectangle(float x_min, float y_min,
             int(y_max * height()), src_color);
 }
  
-Image Image::clone() const
+std::unique_ptr<Image> Image::clone() const
 {
-    Image new_image;
-    new_image.m_bytes = m_bytes;
-    new_image.m_width = m_width;
-    new_image.m_height = m_height;
+    auto new_image = std::unique_ptr<Image>(new Image());
+    new_image->m_bytes = m_bytes;
+    new_image->m_width = m_width;
+    new_image->m_height = m_height;
 
     return new_image;    
 }
