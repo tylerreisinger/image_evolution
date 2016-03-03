@@ -32,6 +32,7 @@ class Ui_MainWindow
 public:
     QAction *action_Save_Current_State;
     QAction *action_Load_Reference_Image;
+    QAction *action_Reset;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QLabel *generation_lbl;
@@ -51,6 +52,7 @@ public:
     QPushButton *next_generation_button;
     QMenuBar *menuBar;
     QMenu *menu_File;
+    QMenu *menu_Simulation;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
@@ -62,6 +64,8 @@ public:
         action_Save_Current_State->setObjectName(QStringLiteral("action_Save_Current_State"));
         action_Load_Reference_Image = new QAction(MainWindow);
         action_Load_Reference_Image->setObjectName(QStringLiteral("action_Load_Reference_Image"));
+        action_Reset = new QAction(MainWindow);
+        action_Reset->setObjectName(QStringLiteral("action_Reset"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -154,14 +158,18 @@ public:
         menuBar->setGeometry(QRect(0, 0, 1024, 26));
         menu_File = new QMenu(menuBar);
         menu_File->setObjectName(QStringLiteral("menu_File"));
+        menu_Simulation = new QMenu(menuBar);
+        menu_Simulation->setObjectName(QStringLiteral("menu_Simulation"));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
 
         menuBar->addAction(menu_File->menuAction());
+        menuBar->addAction(menu_Simulation->menuAction());
         menu_File->addAction(action_Load_Reference_Image);
         menu_File->addAction(action_Save_Current_State);
+        menu_Simulation->addAction(action_Reset);
 
         retranslateUi(MainWindow);
 
@@ -173,7 +181,8 @@ public:
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         action_Save_Current_State->setText(QApplication::translate("MainWindow", "&Save Current State", 0));
         action_Load_Reference_Image->setText(QApplication::translate("MainWindow", "&Load Reference Image", 0));
-        generation_lbl->setText(QApplication::translate("MainWindow", "TextLabel", 0));
+        action_Reset->setText(QApplication::translate("MainWindow", "&Reset", 0));
+        generation_lbl->setText(QApplication::translate("MainWindow", "Generation #", 0));
         average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));
         best_score_label->setText(QApplication::translate("MainWindow", "Best Score:", 0));
         state_number_label->setText(QApplication::translate("MainWindow", "State #/#", 0));
@@ -183,6 +192,7 @@ public:
         toggle_evolution_button->setText(QApplication::translate("MainWindow", "Start Evolution", 0));
         next_generation_button->setText(QApplication::translate("MainWindow", "Next Generation", 0));
         menu_File->setTitle(QApplication::translate("MainWindow", "&File", 0));
+        menu_Simulation->setTitle(QApplication::translate("MainWindow", "Si&mulation", 0));
     } // retranslateUi
 
 };

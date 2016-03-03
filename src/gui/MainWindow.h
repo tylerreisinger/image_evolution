@@ -8,6 +8,8 @@
 #include <QGraphicsScene>
 
 #include "GuiBridge.h"
+#include "Population.h"
+#include "ImageEvolver.h"
 
 class EvolutionDriver;
 
@@ -31,6 +33,8 @@ private:
     void update_gfx();
     void load_population();
 
+    Population make_initial_population(ImageEvolver::GeneratorType& rng);
+
     void setup_signals();
     void next_state_clicked();
     void prev_state_clicked();
@@ -40,12 +44,16 @@ private:
     void state_updated();
     void population_updated();
 
+    void reset_simulation();
+
     void on_open_image(bool);
 
     void on_save_state_image(bool);
     void handle_save_state_image();
 
     void reset_evolution(std::unique_ptr<Image> new_image);
+
+    void update_simulation_buttons();
 
     std::unique_ptr<EvolutionDriver> initialize_evolution(std::unique_ptr<Image> image);
 

@@ -8,7 +8,7 @@ GuiBridge::GuiBridge(std::unique_ptr<EvolutionDriver> driver):
     m_driver(std::move(driver))
 {
     update_current_state();
-    start_evolution();
+    start_thread();
 }
  
 GuiBridge::~GuiBridge()
@@ -19,9 +19,12 @@ GuiBridge::~GuiBridge()
     }
 }
  
-void GuiBridge::start_evolution()
+void GuiBridge::start_thread()
 {
-    m_evolver_thread = std::thread(&GuiBridge::thread_func, this);
+    m_quit = false;
+    if(!m_evolver_thread.joinable()) {
+        m_evolver_thread = std::thread(&GuiBridge::thread_func, this);
+    }
 }
  
 std::tuple<Population, int> GuiBridge::get_current_evolution_state() const
@@ -57,7 +60,6 @@ void GuiBridge::pause()
  
 void GuiBridge::step()
 { 
-    std::cout << "Step" << std::endl;
     std::unique_lock<std::mutex> lock(m_progress_mutex);
     m_step = true;
     m_proceed_cv.notify_one();
@@ -74,6 +76,22 @@ void GuiBridge::join()
     if(m_evolver_thread.joinable()) {
         m_evolver_thread.join();
     }
+}
+ 
+void GuiBridge::restart()
+{
+    if(m_evolver_thread.joinable()) {
+        stop();
+        m_evolver_thread.join();
+        start_thread();
+    } 
+}
+ 
+void GuiBridge::reinitialize_population(Population population)
+{
+    restart();
+    m_driver->set_population(std::move(population));
+    update_current_state(); 
 }
  
 void GuiBridge::thread_func()
@@ -108,7 +126,6 @@ void GuiBridge::next_generation()
 
     update_current_state();
     emit population_updated();
-
 }
  
 void GuiBridge::update_current_state()
@@ -117,4 +134,4 @@ void GuiBridge::update_current_state()
     m_cur_population = m_driver->population().clone();
     m_cur_generation = m_driver->generation_number();
 }
- 
+

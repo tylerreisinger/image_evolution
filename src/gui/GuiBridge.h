@@ -29,7 +29,6 @@ public:
 
     EvolutionDriver& evolution_driver() {return *m_driver;}
 
-    void start_evolution();
 
     void resume();
     void stop();
@@ -41,6 +40,10 @@ public:
 
     void join();
 
+    void restart();
+
+    void reinitialize_population(Population population);
+
 signals:
     void population_updated();
     void stopped();
@@ -49,6 +52,7 @@ protected:
     void thread_func();
     void next_generation();
     void update_current_state();
+    void start_thread();
 
     std::unique_ptr<EvolutionDriver> m_driver; 
 

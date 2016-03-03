@@ -45,7 +45,7 @@ std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(
 
     driver->set_target_image(m_target_image->clone());
 
-    auto start_pop = make_random_fixed_size_population(40, 128, driver->get_rng());
+    auto start_pop = make_initial_population(driver->get_rng());
 
     driver->set_population(std::move(start_pop));
 
@@ -78,6 +78,11 @@ void MainWindow::load_population()
     std::tie(m_display_pop, m_gen_number) = m_bridge->get_current_evolution_state();
 }
  
+Population MainWindow::make_initial_population(ImageEvolver::GeneratorType& rng)
+{
+    return make_random_fixed_size_population(40, 128, rng);
+}
+ 
 void MainWindow::setup_signals()
 {
     connect(ui->next_state_button, &QPushButton::clicked,
@@ -92,11 +97,16 @@ void MainWindow::setup_signals()
             this, &MainWindow::evolution_toggle_clicked);
 
     //Context menu
+    //File
     connect(ui->action_Save_Current_State, &QAction::triggered,
-            this, &MainWindow::on_save_state_image);
+            this, &MainWindow::handle_save_state_image);
 
     connect(ui->action_Load_Reference_Image, &QAction::triggered,
             this, &MainWindow::on_open_image);
+
+    //Simulation
+    connect(ui->action_Reset, &QAction::triggered,
+            this, &MainWindow::reset_simulation);
 }
  
 void MainWindow::next_state_clicked()
@@ -195,6 +205,17 @@ void MainWindow::handle_save_state_image()
     }
 }
  
+void MainWindow::reset_simulation()
+{
+    auto pop = make_initial_population(m_driver->get_rng());
+    m_bridge->reinitialize_population(std::move(pop));
+
+    m_running = false;
+    update_simulation_buttons();
+
+    population_updated();
+}
+ 
 void MainWindow::on_open_image(bool)
 {
     auto filename = QFileDialog::getOpenFileName(this, "Open Reference Image", ".",
@@ -212,11 +233,6 @@ void MainWindow::on_open_image(bool)
         }
 
     }
-}
- 
-void MainWindow::on_save_state_image(bool)
-{
-    handle_save_state_image(); 
 }
  
 void MainWindow::reset_evolution(std::unique_ptr<Image> new_image)
@@ -237,10 +253,20 @@ void MainWindow::reset_evolution(std::unique_ptr<Image> new_image)
     m_display_state_idx = 0;
     update_state_button_status();
 
-    ui->toggle_evolution_button->setText("Start Evolution");
-    ui->next_generation_button->setEnabled(true);
     m_running = false;
+    update_simulation_buttons();
 
     population_updated();
+}
+ 
+void MainWindow::update_simulation_buttons()
+{
+    if(m_running) {
+        ui->toggle_evolution_button->setText("Stop Evolution");
+        ui->next_generation_button->setEnabled(false);
+    } else {
+        ui->toggle_evolution_button->setText("Start Evolution");
+        ui->next_generation_button->setEnabled(true);
+    }
 }
  
