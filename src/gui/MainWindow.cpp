@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
     auto ref_image = Image::load_image("../../reference_images/red-apple.jpg");
 
     reset_evolution(std::move(ref_image));
+
+    update_state_button_status();
 }
 
 MainWindow::~MainWindow()
@@ -111,32 +113,25 @@ void MainWindow::setup_signals()
  
 void MainWindow::next_state_clicked()
 {
-    m_display_state_idx += 1;
-    update_state_button_status();
-    state_updated();
+    set_active_state(m_display_state_idx + 1);
     update_gfx();
 }
 
 void MainWindow::prev_state_clicked() {
-    m_display_state_idx -= 1;
-    update_state_button_status();
-    state_updated();
+    set_active_state(m_display_state_idx - 1);
     update_gfx();
 }
  
 void MainWindow::evolution_toggle_clicked()
 {
     if(!m_running) {
-        ui->toggle_evolution_button->setText("Stop Evolution");
-        ui->next_generation_button->setEnabled(false);
         m_running = true;
         m_bridge->resume();
     } else {
-        ui->toggle_evolution_button->setText("Start Evolution");
-        ui->next_generation_button->setEnabled(true);
         m_running = false;
         m_bridge->pause();
     }
+    update_simulation_buttons();
 }
  
 void MainWindow::update_state_button_status()
@@ -210,6 +205,7 @@ void MainWindow::reset_simulation()
     auto pop = make_initial_population(m_driver->get_rng());
     m_bridge->reinitialize_population(std::move(pop));
 
+    set_active_state(0);
     m_running = false;
     update_simulation_buttons();
 
@@ -250,8 +246,7 @@ void MainWindow::reset_evolution(std::unique_ptr<Image> new_image)
     connect(m_bridge.get(), &GuiBridge::population_updated,
             this, &MainWindow::population_updated);
 
-    m_display_state_idx = 0;
-    update_state_button_status();
+    set_active_state(0);
 
     m_running = false;
     update_simulation_buttons();
@@ -267,6 +262,15 @@ void MainWindow::update_simulation_buttons()
     } else {
         ui->toggle_evolution_button->setText("Start Evolution");
         ui->next_generation_button->setEnabled(true);
+    }
+}
+ 
+void MainWindow::set_active_state(int idx)
+{
+    if(idx < m_display_pop.size()) {
+        m_display_state_idx = idx;
+        update_state_button_status();
+        state_updated();
     }
 }
  

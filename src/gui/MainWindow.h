@@ -55,6 +55,8 @@ private:
 
     void update_simulation_buttons();
 
+    void set_active_state(int idx);
+
     std::unique_ptr<EvolutionDriver> initialize_evolution(std::unique_ptr<Image> image);
 
     Ui::MainWindow* ui; 
