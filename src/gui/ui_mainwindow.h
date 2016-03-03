@@ -31,6 +31,7 @@ class Ui_MainWindow
 {
 public:
     QAction *action_Save_Current_State;
+    QAction *action_Load_Reference_Image;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QLabel *generation_lbl;
@@ -59,6 +60,8 @@ public:
         MainWindow->resize(1024, 800);
         action_Save_Current_State = new QAction(MainWindow);
         action_Save_Current_State->setObjectName(QStringLiteral("action_Save_Current_State"));
+        action_Load_Reference_Image = new QAction(MainWindow);
+        action_Load_Reference_Image->setObjectName(QStringLiteral("action_Load_Reference_Image"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -157,6 +160,7 @@ public:
         MainWindow->setStatusBar(statusBar);
 
         menuBar->addAction(menu_File->menuAction());
+        menu_File->addAction(action_Load_Reference_Image);
         menu_File->addAction(action_Save_Current_State);
 
         retranslateUi(MainWindow);
@@ -168,6 +172,7 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         action_Save_Current_State->setText(QApplication::translate("MainWindow", "&Save Current State", 0));
+        action_Load_Reference_Image->setText(QApplication::translate("MainWindow", "&Load Reference Image", 0));
         generation_lbl->setText(QApplication::translate("MainWindow", "TextLabel", 0));
         average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));
         best_score_label->setText(QApplication::translate("MainWindow", "Best Score:", 0));

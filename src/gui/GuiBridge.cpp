@@ -8,6 +8,7 @@ GuiBridge::GuiBridge(std::unique_ptr<EvolutionDriver> driver):
     m_driver(std::move(driver))
 {
     update_current_state();
+    start_evolution();
 }
  
 GuiBridge::~GuiBridge()
@@ -66,6 +67,13 @@ int GuiBridge::cur_generation() const
 {
     std::lock_guard<std::mutex> lock(m_cur_state_mutex); 
     return m_cur_generation;
+}
+ 
+void GuiBridge::join()
+{
+    if(m_evolver_thread.joinable()) {
+        m_evolver_thread.join();
+    }
 }
  
 void GuiBridge::thread_func()

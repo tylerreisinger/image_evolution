@@ -133,7 +133,7 @@ void ImageEvolver::advance_generation()
         auto partition = partition_dist(m_rng);
 
         auto offspring = two_parent_crossover(parent1, parent2, partition);
-        mutate_state(offspring, 0.02);
+        mutate_state(offspring, 0.03);
         total_pop.add_state(std::move(offspring));
     }
 

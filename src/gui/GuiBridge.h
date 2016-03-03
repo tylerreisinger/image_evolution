@@ -39,6 +39,8 @@ public:
     int cur_generation() const;
     std::tuple<Population, int> get_current_evolution_state() const;
 
+    void join();
+
 signals:
     void population_updated();
     void stopped();

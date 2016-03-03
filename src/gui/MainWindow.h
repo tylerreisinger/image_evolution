@@ -40,10 +40,14 @@ private:
     void state_updated();
     void population_updated();
 
+    void on_open_image(bool);
+
     void on_save_state_image(bool);
     void handle_save_state_image();
 
-    std::unique_ptr<EvolutionDriver> initialize_evolution();
+    void reset_evolution(Image new_image);
+
+    std::unique_ptr<EvolutionDriver> initialize_evolution(Image image);
 
     Ui::MainWindow* ui; 
     std::unique_ptr<QGraphicsScene> m_gfx_scene;

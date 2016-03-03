@@ -10,6 +10,7 @@
 #include <QMessageBox>
 
 #include "EvolutionDriver.h"
+#include "Image.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -23,19 +24,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->state_viewer->setScene(m_gfx_scene.get());
 
-    auto driver = initialize_evolution();
-
-    m_bridge = std::make_unique<GuiBridge>(std::move(driver));
-    m_driver = &m_bridge->evolution_driver();
-
-    population_updated();
-    //load_population();
-    //update_gfx();
-
     setup_signals();
-    update_state_button_status();
 
-    m_bridge->start_evolution();
+    auto ref_image = Image::load_image("../../reference_images/red-apple.jpg");
+
+    reset_evolution(std::move(ref_image));
 }
 
 MainWindow::~MainWindow()
@@ -43,16 +36,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution()
+std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(Image image)
 {
     auto driver = std::make_unique<EvolutionDriver>();
 
-    auto ref_image = Image::load_image("../../reference_images/rygcbm-hexagon.png");
-    m_target_image = std::make_unique<Image>(std::move(ref_image));
+    m_target_image = std::make_unique<Image>(std::move(image));
 
     driver->set_target_image(m_target_image->clone());
 
-    auto start_pop = make_random_fixed_size_population(40, 96, driver->get_rng());
+    auto start_pop = make_random_fixed_size_population(40, 128, driver->get_rng());
 
     driver->set_population(std::move(start_pop));
 
@@ -61,8 +53,7 @@ std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution()
  
 void MainWindow::set_target_image(Image image)
 {
-    m_target_image = std::make_unique<Image>(std::move(image)); 
-    m_driver->set_target_image(m_target_image->clone());
+    reset_evolution(std::move(image));
 }
  
 void MainWindow::advance_generation()
@@ -96,15 +87,15 @@ void MainWindow::setup_signals()
     connect(ui->next_generation_button, &QPushButton::clicked,
             this, &MainWindow::advance_generation);
 
-    connect(m_bridge.get(), &GuiBridge::population_updated,
-            this, &MainWindow::population_updated);
-
     connect(ui->toggle_evolution_button, &QPushButton::clicked,
             this, &MainWindow::evolution_toggle_clicked);
 
     //Context menu
     connect(ui->action_Save_Current_State, &QAction::triggered,
             this, &MainWindow::on_save_state_image);
+
+    connect(ui->action_Load_Reference_Image, &QAction::triggered,
+            this, &MainWindow::on_open_image);
 }
  
 void MainWindow::next_state_clicked()
@@ -203,8 +194,45 @@ void MainWindow::handle_save_state_image()
     }
 }
  
+void MainWindow::on_open_image(bool)
+{
+    auto filename = QFileDialog::getOpenFileName(this, "Open Reference Image", ".",
+           "Image Files(*.png *.bmp *.jpg)").toStdString();
+
+    if(!filename.empty()) {
+        auto img = Image::load_image(filename);
+
+        set_target_image(std::move(img));
+    }
+}
+ 
 void MainWindow::on_save_state_image(bool)
 {
     handle_save_state_image(); 
+}
+ 
+void MainWindow::reset_evolution(Image new_image)
+{
+    if(m_bridge != nullptr) {
+        m_bridge->stop();
+        m_bridge->join();
+    }
+
+    auto driver = initialize_evolution(std::move(new_image));
+
+    m_bridge = std::make_unique<GuiBridge>(std::move(driver));
+    m_driver = &m_bridge->evolution_driver();
+
+    connect(m_bridge.get(), &GuiBridge::population_updated,
+            this, &MainWindow::population_updated);
+
+    m_display_state_idx = 0;
+    update_state_button_status();
+
+    ui->toggle_evolution_button->setText("Start Evolution");
+    ui->next_generation_button->setEnabled(true);
+    m_running = false;
+
+    population_updated();
 }
  
