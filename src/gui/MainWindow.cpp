@@ -202,8 +202,15 @@ void MainWindow::on_open_image(bool)
 
     if(!filename.empty()) {
         auto img = Image::load_image(filename);
+        if(img == nullptr) {
+            QMessageBox msg;
+            auto message = "Unable to load image '" + filename + "'.";
+            msg.setText(message.c_str());
+            msg.exec();
+        } else {
+            set_target_image(std::move(img));
+        }
 
-        set_target_image(std::move(img));
     }
 }
  
