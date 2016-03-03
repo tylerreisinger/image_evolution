@@ -22,7 +22,13 @@ public:
     State& operator =(State&& other) noexcept;
     State& operator =(const State& other) = delete;
 
+    float& operator [](std::size_t idx) {return m_state_vector[idx];}
+    float operator [](std::size_t idx) const {return m_state_vector[idx];}
+
     State clone() const;
+
+    //Number of values per element.
+    int element_size() const;
 
     void set_score(ScoreType score) {
         m_score = score;
@@ -40,6 +46,9 @@ public:
         return m_state_vector.size();
     }
 
+    std::size_t element_count() const {
+        return m_state_vector.size() / element_size();
+    }
 
     const StateVec& points() const {
         return m_state_vector;

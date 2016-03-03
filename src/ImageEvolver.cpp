@@ -3,13 +3,17 @@
 #include <iostream>
 #include <numeric>
 
-ImageEvolver::ImageEvolver()
+
+ImageEvolver::ImageEvolver(std::unique_ptr<Mutator> mutator):
+    m_mutator(std::move(mutator))
 {
 }
  
-ImageEvolver::ImageEvolver(Population initial_population):
-    m_population(std::move(initial_population)) {
-     
+ImageEvolver::ImageEvolver(Population initial_population,
+        std::unique_ptr<Mutator> mutator):
+    m_population(std::move(initial_population)),
+    m_mutator(std::move(mutator))
+{
 }
  
 State::ScoreType ImageEvolver::score_state(const State& state) const
@@ -46,17 +50,9 @@ void ImageEvolver::apply_state(const State& state, Image& image) const
     }
 }
  
-State& ImageEvolver::mutate_state(State& state, double elem_mutate_probability)
+State& ImageEvolver::mutate_state(State& state)
 {
-    std::uniform_real_distribution<float> prob_dist(0.0, 1.0);
-    std::uniform_real_distribution<float> value_dist(0.0, 1.0);
-
-    for(int i = 0; i < state.size(); ++i) {
-        if(prob_dist(m_rng) < elem_mutate_probability) {
-            state.points()[i] = value_dist(m_rng);
-        }
-    }
-
+    m_mutator->mutate_state(state, m_rng);
     return state;
 }
  
@@ -133,7 +129,7 @@ void ImageEvolver::advance_generation()
         auto partition = partition_dist(m_rng);
 
         auto offspring = two_parent_crossover(parent1, parent2, partition);
-        mutate_state(offspring, 0.03);
+        mutate_state(offspring);
         total_pop.add_state(std::move(offspring));
     }
 
@@ -181,6 +177,11 @@ std::vector<State::ScoreType> ImageEvolver::compute_rel_scores(
     }
 
     return std::move(rel_scores);
+}
+ 
+void ImageEvolver::set_mutator(std::unique_ptr<Mutator> mutator)
+{
+    m_mutator = std::move(mutator); 
 }
  
 void ImageEvolver::update_scores(Population& pop)

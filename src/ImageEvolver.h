@@ -9,6 +9,7 @@
 #include "Image.h"
 #include "Population.h"
 #include "Color.h"
+#include "Mutator.h"
 
 class ImageEvolver {
 public:
@@ -19,8 +20,14 @@ public:
     static constexpr int POINTS_PER_COLOR = 4;
     static constexpr int POINTS_PER_ELEM = POINTS_PER_GEOM + POINTS_PER_COLOR;
 
-    ImageEvolver();
-    ImageEvolver(Population initial_population);
+    static std::unique_ptr<Mutator> default_mutator() {
+        return std::make_unique<Mutator>(Mutator::default_mutator());
+    }
+
+    ImageEvolver(std::unique_ptr<Mutator> mutator = default_mutator());
+
+    ImageEvolver(Population initial_population, std::unique_ptr<Mutator> mutator = 
+            default_mutator());
     ~ImageEvolver() = default;
 
     ImageEvolver(const ImageEvolver& other) = delete;
@@ -37,7 +44,7 @@ public:
 
     State::ScoreType score_state(const State& state) const;
 
-    State& mutate_state(State& state, double elem_mutate_probability);
+    State& mutate_state(State& state);
 
     void set_population(Population new_population);
 
@@ -53,6 +60,9 @@ public:
 
     State::ScoreType compute_total_score();
 
+    Mutator& mutator() {return *m_mutator;}
+    void set_mutator(std::unique_ptr<Mutator> mutator);
+
     GeneratorType& get_rng() {return m_rng;}
 
 protected:
@@ -63,6 +73,8 @@ protected:
             ScoreType select_pos);
     Population select_survivors(Population& total_pop, int n_way);
     void apply_state(const State& state, Image& image) const;
+
+    std::unique_ptr<Mutator> m_mutator;
 
     Population m_population;
     int m_gen_number = 0;

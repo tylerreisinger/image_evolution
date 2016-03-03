@@ -28,6 +28,11 @@ State State::clone() const
 {
     return State(*this); 
 }
+
+int State::element_size() const
+{
+    return 8;
+}
  
 State two_parent_crossover(const State& left, const State& right, int partition) {
     assert(partition < right.size());
@@ -40,3 +45,5 @@ State two_parent_crossover(const State& left, const State& right, int partition)
 
     return State(std::move(offspring));
 }
+
+ 
