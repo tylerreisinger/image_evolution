@@ -54,8 +54,9 @@ public:
     QDoubleSpinBox *perturbation_width_value;
     QHBoxLayout *horizontalLayout;
     QSpacerItem *horizontalSpacer_2;
-    QPushButton *accept_button;
-    QSpacerItem *horizontalSpacer;
+    QPushButton *okay_button;
+    QPushButton *cancel_button;
+    QPushButton *apply_button;
 
     void setupUi(QDialog *MutateDialog)
     {
@@ -204,6 +205,7 @@ public:
         perturbation_width_value->setObjectName(QStringLiteral("perturbation_width_value"));
         perturbation_width_value->setDecimals(1);
         perturbation_width_value->setMaximum(50);
+        perturbation_width_value->setSingleStep(1);
 
         gridLayout->addWidget(perturbation_width_value, 3, 2, 1, 1);
 
@@ -216,14 +218,20 @@ public:
 
         horizontalLayout->addItem(horizontalSpacer_2);
 
-        accept_button = new QPushButton(MutateDialog);
-        accept_button->setObjectName(QStringLiteral("accept_button"));
+        okay_button = new QPushButton(MutateDialog);
+        okay_button->setObjectName(QStringLiteral("okay_button"));
 
-        horizontalLayout->addWidget(accept_button);
+        horizontalLayout->addWidget(okay_button);
 
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        cancel_button = new QPushButton(MutateDialog);
+        cancel_button->setObjectName(QStringLiteral("cancel_button"));
 
-        horizontalLayout->addItem(horizontalSpacer);
+        horizontalLayout->addWidget(cancel_button);
+
+        apply_button = new QPushButton(MutateDialog);
+        apply_button->setObjectName(QStringLiteral("apply_button"));
+
+        horizontalLayout->addWidget(apply_button);
 
 
         verticalLayout->addLayout(horizontalLayout);
@@ -253,7 +261,9 @@ public:
         label_11->setText(QApplication::translate("MutateDialog", "Replace Chance:", 0));
         label_2->setText(QApplication::translate("MutateDialog", "Perturbation Width:", 0));
         perturbation_width_value->setSuffix(QApplication::translate("MutateDialog", "%", 0));
-        accept_button->setText(QApplication::translate("MutateDialog", "Accept", 0));
+        okay_button->setText(QApplication::translate("MutateDialog", "Okay", 0));
+        cancel_button->setText(QApplication::translate("MutateDialog", "Cancel", 0));
+        apply_button->setText(QApplication::translate("MutateDialog", "Apply", 0));
     } // retranslateUi
 
 };

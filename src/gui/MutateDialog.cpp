@@ -5,7 +5,8 @@
 MutateDialog::MutateDialog(const Mutator& mutator, QWidget* parent):
     QDialog(parent),
     ui(std::make_unique<Ui::MutateDialog>()),
-    m_mutator(std::make_unique<Mutator>(mutator))
+    m_mutator(std::make_unique<Mutator>(mutator)),
+    m_accepted_mutator(std::make_unique<Mutator>(mutator))
 {
     ui->setupUi(this);
     this->setWindowTitle("Mutation Configuration");
@@ -17,6 +18,13 @@ MutateDialog::MutateDialog(const Mutator& mutator, QWidget* parent):
 MutateDialog::~MutateDialog()
 {
  
+}
+ 
+void MutateDialog::set_mutator(const Mutator& mutator)
+{
+    *m_mutator = mutator;
+    *m_accepted_mutator = mutator;
+    update_ui();
 }
  
 void MutateDialog::setup_signals() {
@@ -104,8 +112,21 @@ void MutateDialog::setup_signals() {
             });
 
     //Buttons
-    connect(ui->accept_button, &QPushButton::clicked,
+    connect(ui->apply_button, &QPushButton::clicked,
             this, &MutateDialog::on_accept);
+
+    connect(ui->okay_button, &QPushButton::clicked,
+            this, [this]() {
+                on_accept();
+                this->hide();
+            });
+
+    connect(ui->cancel_button, &QPushButton::clicked,
+            this, [this]() {
+                *m_mutator = *m_accepted_mutator;
+                update_ui();
+                this->hide();
+            });
 
 }
  
@@ -140,5 +161,6 @@ void MutateDialog::update_replace_values()
  
 void MutateDialog::on_accept()
 {
+    *m_accepted_mutator = *m_mutator;
     emit values_accepted();
 }

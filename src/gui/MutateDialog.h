@@ -23,7 +23,9 @@ public:
     MutateDialog& operator =(const MutateDialog& other) = delete;
     MutateDialog& operator =(MutateDialog&& other) noexcept = delete;
 
-    const Mutator& mutator() const {return *m_mutator;}
+    const Mutator& mutator() const {return *m_accepted_mutator;}
+
+    void set_mutator(const Mutator& mutator);
 
 signals:
     void values_accepted();
@@ -37,6 +39,7 @@ private:
     void on_accept();
 
     std::unique_ptr<Mutator> m_mutator;
+    std::unique_ptr<Mutator> m_accepted_mutator;
     std::unique_ptr<Ui::MutateDialog> ui;
 };
 

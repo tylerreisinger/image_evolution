@@ -193,11 +193,9 @@ void MainWindow::open_mutation_config()
 
         connect(m_mutate_dialog.get(), &MutateDialog::values_accepted,
                this, &MainWindow::set_mutator);
-
-        m_mutate_dialog->show();
-    } else {
-        m_mutate_dialog->show();
     }
+    m_mutate_dialog->set_mutator(m_driver->evolver().mutator());
+    m_mutate_dialog->show();
 }
  
 void MainWindow::set_mutator()
