@@ -10,9 +10,12 @@
 #include "GuiBridge.h"
 #include "Population.h"
 #include "ImageEvolver.h"
+#include "InitialSetings.h"
 
 class EvolutionDriver;
+
 class MutateDialog;
+class InitialSettingsDialog;
 
 namespace Ui {
     class MainWindow;
@@ -50,7 +53,9 @@ private:
     void on_open_image(bool);
 
     void open_mutation_config();
+    void open_initial_settings_dialog();
     void set_mutator();
+    void set_initial_settings();
 
     void on_save_state_image(bool);
     void handle_save_state_image();
@@ -71,7 +76,9 @@ private:
     std::unique_ptr<Image> m_target_image;
 
     std::unique_ptr<MutateDialog> m_mutate_dialog;
+    std::unique_ptr<InitialSettingsDialog> m_initial_settings_dialog;
 
+    InitialSettings m_initial_settings;
     Mutator m_mutator;
 
     Population m_display_pop;

@@ -34,6 +34,7 @@ public:
     QAction *action_Load_Reference_Image;
     QAction *action_Reset;
     QAction *actionConfigure_Mutations;
+    QAction *action_Initial_Settings;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QLabel *generation_lbl;
@@ -69,6 +70,8 @@ public:
         action_Reset->setObjectName(QStringLiteral("action_Reset"));
         actionConfigure_Mutations = new QAction(MainWindow);
         actionConfigure_Mutations->setObjectName(QStringLiteral("actionConfigure_Mutations"));
+        action_Initial_Settings = new QAction(MainWindow);
+        action_Initial_Settings->setObjectName(QStringLiteral("action_Initial_Settings"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -174,6 +177,7 @@ public:
         menu_File->addAction(action_Save_Current_State);
         menu_Simulation->addAction(action_Reset);
         menu_Simulation->addAction(actionConfigure_Mutations);
+        menu_Simulation->addAction(action_Initial_Settings);
 
         retranslateUi(MainWindow);
 
@@ -187,6 +191,7 @@ public:
         action_Load_Reference_Image->setText(QApplication::translate("MainWindow", "&Load Reference Image", 0));
         action_Reset->setText(QApplication::translate("MainWindow", "&Reset", 0));
         actionConfigure_Mutations->setText(QApplication::translate("MainWindow", "Configure &Mutations", 0));
+        action_Initial_Settings->setText(QApplication::translate("MainWindow", "&Initial Settings", 0));
         generation_lbl->setText(QApplication::translate("MainWindow", "Generation #", 0));
         average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));
         best_score_label->setText(QApplication::translate("MainWindow", "Best Score:", 0));

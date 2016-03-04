@@ -12,6 +12,7 @@
 #include "EvolutionDriver.h"
 #include "Image.h"
 #include "MutateDialog.h"
+#include "InitialSettingsDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -83,7 +84,8 @@ void MainWindow::load_population()
  
 Population MainWindow::make_initial_population(ImageEvolver::GeneratorType& rng)
 {
-    return make_random_fixed_size_population(40, 128, rng);
+    return make_random_fixed_size_population(m_initial_settings.population_size, 
+            m_initial_settings.rectangle_count * 8, rng);
 }
  
 void MainWindow::setup_signals()
@@ -113,6 +115,9 @@ void MainWindow::setup_signals()
 
     connect(ui->actionConfigure_Mutations, &QAction::triggered,
             this, &MainWindow::open_mutation_config);
+
+    connect(ui->action_Initial_Settings, &QAction::triggered,
+            this, &MainWindow::open_initial_settings_dialog);
 }
  
 void MainWindow::next_state_clicked()
@@ -198,10 +203,28 @@ void MainWindow::open_mutation_config()
     m_mutate_dialog->show();
 }
  
+void MainWindow::open_initial_settings_dialog()
+{
+    if(m_initial_settings_dialog == nullptr) {
+        m_initial_settings_dialog = 
+            std::make_unique<InitialSettingsDialog>(m_initial_settings);
+
+        connect(m_initial_settings_dialog.get(), &InitialSettingsDialog::values_accepted,
+                this, &MainWindow::set_initial_settings);
+    } 
+    m_initial_settings_dialog->set_values(m_initial_settings);
+    m_initial_settings_dialog->show();
+}
+ 
 void MainWindow::set_mutator()
 {
     m_mutator = m_mutate_dialog->mutator();
     m_driver->evolver().set_mutator(std::make_unique<Mutator>(m_mutator));
+}
+ 
+void MainWindow::set_initial_settings()
+{
+    m_initial_settings = m_initial_settings_dialog->values(); 
 }
  
 void MainWindow::handle_save_state_image()
