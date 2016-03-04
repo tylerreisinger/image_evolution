@@ -28,11 +28,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setup_signals();
 
-    auto ref_image = Image::load_image("../../reference_images/red-apple.jpg");
-
-    reset_evolution(std::move(ref_image));
-
+    set_simulation_unloaded_state();
+    update_simulation_buttons();
     update_state_button_status();
+    state_updated();
 }
 
 MainWindow::~MainWindow()
@@ -146,8 +145,12 @@ void MainWindow::evolution_toggle_clicked()
 void MainWindow::update_state_button_status()
 {
     if(m_display_state_idx == 0) {
+        if(m_display_pop.size() > 0) {
+            ui->next_state_button->setDisabled(false);
+        } else {
+            ui->next_state_button->setDisabled(true);
+        }
         ui->prev_state_button->setDisabled(true); 
-        ui->next_state_button->setDisabled(false);
     } else if(m_display_state_idx == m_display_pop.size()-1) {
         ui->prev_state_button->setDisabled(false); 
         ui->next_state_button->setDisabled(true);
@@ -159,14 +162,23 @@ void MainWindow::update_state_button_status()
  
 void MainWindow::state_updated()
 {
+    auto num_states = m_display_pop.size();
+    auto state_num = m_display_state_idx;
+    if(num_states > 0) {
+        state_num += 1;
+    }
+
     std::stringstream state_num_text;
-    state_num_text << "State " << m_display_state_idx+1 << " of " 
-        << m_display_pop.size();
+    state_num_text << "State " << state_num << " of " 
+        << num_states;
     ui->state_number_label->setText(state_num_text.str().c_str());
 
-    std::stringstream state_score_text;
-    state_score_text << "Score: " << m_display_pop[m_display_state_idx].score();
-    ui->state_score_label->setText(state_score_text.str().c_str());
+    if(num_states > 0) {
+        std::stringstream state_score_text;
+        state_score_text << "Score: " << m_display_pop[m_display_state_idx].score();
+        ui->state_score_label->setText(state_score_text.str().c_str());
+    }
+    update_state_button_status();
 }
  
 void MainWindow::population_updated()
@@ -199,7 +211,7 @@ void MainWindow::open_mutation_config()
         connect(m_mutate_dialog.get(), &MutateDialog::values_accepted,
                this, &MainWindow::set_mutator);
     }
-    m_mutate_dialog->set_mutator(m_driver->evolver().mutator());
+    m_mutate_dialog->set_mutator(m_mutator);
     m_mutate_dialog->show();
 }
  
@@ -219,7 +231,9 @@ void MainWindow::open_initial_settings_dialog()
 void MainWindow::set_mutator()
 {
     m_mutator = m_mutate_dialog->mutator();
-    m_driver->evolver().set_mutator(std::make_unique<Mutator>(m_mutator));
+    if(has_loaded_simulation()) {
+        m_driver->evolver().set_mutator(std::make_unique<Mutator>(m_mutator));
+    }
 }
  
 void MainWindow::set_initial_settings()
@@ -250,6 +264,7 @@ void MainWindow::reset_simulation()
     auto pop = make_initial_population(m_driver->get_rng());
     m_bridge->reinitialize_population(std::move(pop));
 
+    set_simulation_loaded_state();
     set_active_state(0);
     m_running = false;
     update_simulation_buttons();
@@ -287,10 +302,12 @@ void MainWindow::reset_evolution(std::unique_ptr<Image> new_image)
 
     m_bridge = std::make_unique<GuiBridge>(std::move(driver));
     m_driver = &m_bridge->evolution_driver();
+    m_driver->evolver().set_mutator(std::make_unique<Mutator>(m_mutator));
 
     connect(m_bridge.get(), &GuiBridge::population_updated,
             this, &MainWindow::population_updated);
 
+    set_simulation_loaded_state();
     set_active_state(0);
 
     m_running = false;
@@ -308,6 +325,11 @@ void MainWindow::update_simulation_buttons()
         ui->toggle_evolution_button->setText("Start Evolution");
         ui->next_generation_button->setEnabled(true);
     }
+
+    if(!has_loaded_simulation()) {
+        ui->next_generation_button->setEnabled(false);
+        ui->toggle_evolution_button->setEnabled(false);
+    }
 }
  
 void MainWindow::set_active_state(int idx)
@@ -317,5 +339,23 @@ void MainWindow::set_active_state(int idx)
         update_state_button_status();
         state_updated();
     }
+}
+ 
+void MainWindow::set_simulation_unloaded_state()
+{
+    ui->action_Reset->setEnabled(false);   
+    ui->action_Save_Current_State->setEnabled(false);
+
+    ui->next_generation_button->setEnabled(false);
+    ui->toggle_evolution_button->setEnabled(false);
+}
+ 
+void MainWindow::set_simulation_loaded_state()
+{
+    ui->action_Reset->setEnabled(true);   
+    ui->action_Save_Current_State->setEnabled(true);
+
+    ui->next_generation_button->setEnabled(true);
+    ui->toggle_evolution_button->setEnabled(true);
 }
  

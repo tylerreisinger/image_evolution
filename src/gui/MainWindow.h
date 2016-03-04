@@ -31,6 +31,7 @@ public:
 
     void set_target_image(std::unique_ptr<Image> image);
 
+    bool has_loaded_simulation() const {return m_bridge != nullptr;}
 
     void advance_generation();
 private:
@@ -65,6 +66,9 @@ private:
     void update_simulation_buttons();
 
     void set_active_state(int idx);
+
+    void set_simulation_unloaded_state();
+    void set_simulation_loaded_state();
 
     std::unique_ptr<EvolutionDriver> initialize_evolution(std::unique_ptr<Image> image);
 
