@@ -10,7 +10,7 @@
 #include "GuiBridge.h"
 #include "Population.h"
 #include "ImageEvolver.h"
-#include "InitialSetings.h"
+#include "InitialSettings.h"
 
 class EvolutionDriver;
 

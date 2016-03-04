@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "InitialSetings.h"
+#include "InitialSettings.h"
 
 namespace Ui {
     class InitialSettingsDialog;
