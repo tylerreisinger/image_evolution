@@ -2,6 +2,7 @@
 #define MUTATOR_H_
 
 #include <random>
+#include <ostream>
 
 #include "State.h"
 
@@ -27,8 +28,8 @@ public:
     void mutate_state(State& state, Rng& rng);
 
     float mutation_rate() const {return m_mutation_rate;}
-    float component_mutate_rate() const {return m_component_mutate_rate;}
-    float element_mutate_rate() const {return m_element_mutate_rate;}
+    float component_mutation_rate() const {return m_component_mutate_rate;}
+    float element_mutation_rate() const {return m_element_mutate_rate;}
 
     float perturbation_chance() const {return m_perturbation_chance;}
     float swap_chance() const {return m_swap_chance;}
@@ -214,5 +215,7 @@ inline void Mutator::swap_element(State& state, int idx, Rng& rng) {
     } 
 
 }
+
+std::ostream& operator <<(std::ostream& stream, const Mutator& mutator);
  
 #endif

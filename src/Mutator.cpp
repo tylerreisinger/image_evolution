@@ -51,3 +51,12 @@ Mutator::MutateMode Mutator::select_mutation_mode(float selector) const
     }
 }
  
+std::ostream& operator <<(std::ostream& stream, const Mutator& mutator) {
+    stream << "Mutation Rate: " << mutator.mutation_rate() << std::endl; 
+    stream << "Element Mutation Rate: " << mutator.element_mutation_rate() << std::endl; 
+    stream << "Component Mutation Rate: " << mutator.component_mutation_rate() << std::endl; 
+    stream << "Perturbation Width: " << mutator.perturbation_width() << std::endl; 
+    stream << "Perturbation Chance: " << mutator.perturbation_chance() << std::endl; 
+    stream << "Swap Chance: " << mutator.swap_chance() << std::endl; 
+    return stream;
+}

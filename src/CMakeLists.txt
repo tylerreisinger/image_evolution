@@ -1,5 +1,6 @@
 set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/gui/MainWindow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui/MutateDialog.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/gui/GuiBridge.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/EvolutionDriver.cpp

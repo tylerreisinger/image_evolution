@@ -12,6 +12,7 @@
 #include "ImageEvolver.h"
 
 class EvolutionDriver;
+class MutateDialog;
 
 namespace Ui {
     class MainWindow;
@@ -48,6 +49,9 @@ private:
 
     void on_open_image(bool);
 
+    void open_mutation_config();
+    void set_mutator();
+
     void on_save_state_image(bool);
     void handle_save_state_image();
 
@@ -65,6 +69,10 @@ private:
     std::unique_ptr<GuiBridge> m_bridge;
     EvolutionDriver* m_driver;
     std::unique_ptr<Image> m_target_image;
+
+    std::unique_ptr<MutateDialog> m_mutate_dialog;
+
+    Mutator m_mutator;
 
     Population m_display_pop;
     int m_gen_number = 0;

@@ -11,6 +11,7 @@
 
 #include "EvolutionDriver.h"
 #include "Image.h"
+#include "MutateDialog.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -109,6 +110,9 @@ void MainWindow::setup_signals()
     //Simulation
     connect(ui->action_Reset, &QAction::triggered,
             this, &MainWindow::reset_simulation);
+
+    connect(ui->actionConfigure_Mutations, &QAction::triggered,
+            this, &MainWindow::open_mutation_config);
 }
  
 void MainWindow::next_state_clicked()
@@ -180,6 +184,26 @@ void MainWindow::population_updated()
 
     state_updated();
     update_gfx();
+}
+ 
+void MainWindow::open_mutation_config()
+{
+    if(m_mutate_dialog == nullptr) {
+        m_mutate_dialog = std::make_unique<MutateDialog>(m_mutator);
+
+        connect(m_mutate_dialog.get(), &MutateDialog::values_accepted,
+               this, &MainWindow::set_mutator);
+
+        m_mutate_dialog->show();
+    } else {
+        m_mutate_dialog->show();
+    }
+}
+ 
+void MainWindow::set_mutator()
+{
+    m_mutator = m_mutate_dialog->mutator();
+    m_driver->evolver().set_mutator(std::make_unique<Mutator>(m_mutator));
 }
  
 void MainWindow::handle_save_state_image()
