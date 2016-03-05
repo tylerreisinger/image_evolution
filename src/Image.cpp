@@ -71,19 +71,21 @@ void Image::draw_rectangle(int x_min, int y_min, int x_max, int y_max,
     auto x_end = std::min(width()-1, x_max);
     auto y_end = std::min(height()-1, y_max);
 
-    auto src_alpha = src_color.alpha;
-    auto dest_alpha = 1.0 - src_alpha;
+    float src_alpha = src_color.alpha;
+    float dest_alpha = 1.0f - src_alpha;
 
     //Pre-multiply alpha into the rectangle color. This provides a significant
     //performance gain.
-    auto premul_red = src_color.red * src_alpha;
-    auto premul_green = src_color.green * src_alpha;
-    auto premul_blue = src_color.blue * src_alpha;
+    float premul_red = src_color.red * src_alpha;
+    float premul_green = src_color.green * src_alpha;
+    float premul_blue = src_color.blue * src_alpha;
 
     auto stride = m_width*COMPONENT_COUNT;
 
     for(int y = y_start; y < y_end; ++y) {
-        for(int idx = COMPONENT_COUNT*x_start+y*stride; idx < COMPONENT_COUNT*x_end+y*stride;) {
+        auto y_start_idx = y*stride;
+        for(int idx = COMPONENT_COUNT*x_start+y_start_idx; 
+                idx < COMPONENT_COUNT*x_end+y_start_idx;) {
             m_bytes[idx] = premul_red + m_bytes[idx] * dest_alpha;
             idx+=1;
             m_bytes[idx] = premul_green + m_bytes[idx] * dest_alpha;
