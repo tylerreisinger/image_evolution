@@ -13,7 +13,7 @@
 
 class Image {
 public:
-    static constexpr int COMPONENT_COUNT = 3;
+    static constexpr int COMPONENT_COUNT = 4;
 
     Image(int width, int height, const Colorf& fill_color);
     Image(std::vector<float> pixels, int width, int height);
@@ -40,6 +40,10 @@ public:
         return m_bytes.data();
     }
 
+    float* bytes() {
+        return m_bytes.data();
+    }
+
     int width() const {return m_width;}
     int height() const {return m_height;}
 
@@ -56,10 +60,19 @@ private:
     int m_height;
 };
 
-float image_difference(const Image& ref_image, const Image& test_image);
+void draw_rectangle_slow(Image& image, int x_min, int y_min, int x_max, int y_max,
+        const Colorf& src_color);
+
+double image_difference(const Image& ref_image, const Image& test_image);
 
 float channel_distance(float channel1, float channel2);
 
 bool save_image(const std::string& filename, const Image& image);
+
+double image_difference_sse(const Image& ref_image, const Image& test_image);
+double image_difference_slow(const Image& ref_image, const Image& test_image);
+
+void draw_rectangle_sse(Image& image, int x_min, int y_min, int x_max, int y_max,
+        const Colorf& src_color);
 
 #endif

@@ -11,4 +11,6 @@ set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/Mutator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Population.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/State.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/ImageSse.cpp
     PARENT_SCOPE)

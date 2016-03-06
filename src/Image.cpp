@@ -18,6 +18,7 @@ Image::Image(int width, int height, const Colorf& fill_color):
         m_bytes[idx] = fill_color.red;
         m_bytes[idx+1] = fill_color.green;
         m_bytes[idx+2] = fill_color.blue;
+        m_bytes[idx+3] = 0.0;
     }
 }
  
@@ -47,7 +48,7 @@ std::unique_ptr<Image> Image::load_image(const std::string& filename,
     auto image_data = image.constBits();
     
     std::size_t num_pixels = image.width() * image.height();
-    std::vector<float> pixels(num_pixels*3);
+    std::vector<float> pixels(num_pixels*COMPONENT_COUNT);
 
     std::array<float, 3> bg_componets= {bg_color.red, bg_color.green, bg_color.blue};
 
@@ -59,6 +60,7 @@ std::unique_ptr<Image> Image::load_image(const std::string& filename,
             component = component * alpha + bg_componets[comp] * (1.0-alpha);
             pixels[i++] = component;
         }
+        i += 1;
     }
 
     return std::make_unique<Image>(std::move(pixels), image.width(), image.height()); 
@@ -66,34 +68,11 @@ std::unique_ptr<Image> Image::load_image(const std::string& filename,
 
 void Image::draw_rectangle(int x_min, int y_min, int x_max, int y_max,
         const Colorf& src_color) {
-    auto x_start = std::min(width()-1, x_min);
-    auto y_start = std::min(height()-1, y_min);
-    auto x_end = std::min(width()-1, x_max);
-    auto y_end = std::min(height()-1, y_max);
-
-    float src_alpha = src_color.alpha;
-    float dest_alpha = 1.0f - src_alpha;
-
-    //Pre-multiply alpha into the rectangle color. This provides a significant
-    //performance gain.
-    float premul_red = src_color.red * src_alpha;
-    float premul_green = src_color.green * src_alpha;
-    float premul_blue = src_color.blue * src_alpha;
-
-    auto stride = m_width*COMPONENT_COUNT;
-
-    for(int y = y_start; y < y_end; ++y) {
-        auto y_start_idx = y*stride;
-        for(int idx = COMPONENT_COUNT*x_start+y_start_idx; 
-                idx < COMPONENT_COUNT*x_end+y_start_idx;) {
-            m_bytes[idx] = premul_red + m_bytes[idx] * dest_alpha;
-            idx+=1;
-            m_bytes[idx] = premul_green + m_bytes[idx] * dest_alpha;
-            idx+=1;
-            m_bytes[idx] = premul_blue + m_bytes[idx] * dest_alpha;
-            idx+=1;
-        }
-    }
+#ifdef USE_SSE
+    draw_rectangle_sse(*this, x_min, y_min, x_max, y_max, src_color);
+#else
+    draw_rectangle_slow(*this, x_min, y_min, x_max, y_max, src_color);
+#endif
 }
  
 void Image::draw_rectangle(float x_min, float y_min, 
@@ -113,30 +92,13 @@ std::unique_ptr<Image> Image::clone() const
     return new_image;    
 }
  
-float image_difference(const Image& ref_image, const Image& test_image)
+double image_difference(const Image& ref_image, const Image& test_image)
 {
-    if(ref_image.width() != test_image.width() || ref_image.height() != test_image.height()) {
-        return -1.0;
-    } 
-
-    float image_dist = 0.0;
-
-    for(int y = 0; y < ref_image.height(); ++y) {
-        for(int x = 0; x < ref_image.width(); ++x) {
-            auto idx = (x + y*ref_image.width())*Image::COMPONENT_COUNT;
-            float color_dist = 0.0;
-        
-            color_dist += channel_distance(ref_image[idx], test_image[idx]);
-            idx+=1;
-            color_dist += channel_distance(ref_image[idx], test_image[idx]);
-            idx+=1;
-            color_dist += channel_distance(ref_image[idx], test_image[idx]);
-
-            image_dist += color_dist;
-        }
-    }
-    
-    return image_dist;
+#ifdef USE_SSE 
+    return image_difference_sse(ref_image, test_image);
+#else 
+    return image_difference_slow(ref_image, test_image);
+#endif
 }
  
 float channel_distance(float channel1, float channel2)
@@ -159,12 +121,75 @@ QImage Image::to_qimage() const
 
     for(int px = 0; px < width()*height(); ++px) {
         for(int comp = 0; comp < 3; ++comp) {
-            bytes[px*4+comp] = src_bytes[px*3+2-comp] * 255.0;
+            bytes[px*4+comp] = src_bytes[px*COMPONENT_COUNT+2-comp] * 255.0;
         }
         bytes[px*4+3] = 255;
 
     }
 
     return out_img;
+}
+ 
+void draw_rectangle_slow(Image& image, int x_min, int y_min, int x_max, int y_max,
+        const Colorf& src_color) {
+ 
+    auto x_start = std::min(image.width()-1, x_min);
+    auto y_start = std::min(image.height()-1, y_min);
+    auto x_end = std::min(image.width()-1, x_max);
+    auto y_end = std::min(image.height()-1, y_max);
+
+    float src_alpha = src_color.alpha;
+    float dest_alpha = 1.0f - src_alpha;
+
+    //Pre-multiply alpha into the rectangle color. This provides a significant
+    //performance gain.
+    float premul_red = src_color.red * src_alpha;
+    float premul_green = src_color.green * src_alpha;
+    float premul_blue = src_color.blue * src_alpha;
+
+    auto stride = image.width()*image.COMPONENT_COUNT;
+
+    auto bytes = image.bytes();
+
+    for(int y = y_start; y < y_end; ++y) {
+        auto y_start_idx = y*stride;
+        for(int idx = image.COMPONENT_COUNT*x_start+y_start_idx; 
+                idx < image.COMPONENT_COUNT*x_end+y_start_idx;) {
+            bytes[idx] = premul_red + bytes[idx] * dest_alpha;
+            idx+=1;
+            bytes[idx] = premul_green + bytes[idx] * dest_alpha;
+            idx+=1;
+            bytes[idx] = premul_blue + bytes[idx] * dest_alpha;
+            idx+=1;
+            idx+=1;
+        }
+    }
+}
+ 
+double image_difference_slow(const Image& ref_image, const Image& test_image)
+{
+    if(ref_image.width() != test_image.width() ||
+            ref_image.height() != test_image.height()) {
+        return -1.0;
+    } 
+
+    double image_dist = 0.0;
+
+    for(int y = 0; y < ref_image.height(); ++y) {
+        for(int x = 0; x < ref_image.width(); ++x) {
+            auto idx = (x + y*ref_image.width())*Image::COMPONENT_COUNT;
+            double color_dist = 0.0;
+        
+            color_dist += channel_distance(ref_image[idx], test_image[idx]);
+            idx+=1;
+            color_dist += channel_distance(ref_image[idx], test_image[idx]);
+            idx+=1;
+            color_dist += channel_distance(ref_image[idx], test_image[idx]);
+
+            image_dist += color_dist;
+        }
+    }
+    
+    return image_dist;
 }
  

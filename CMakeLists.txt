@@ -11,7 +11,10 @@ find_package(Qt5Widgets)
 
 add_executable(image_evolution ${SOURCES})
 
-list(APPEND CMAKE_CXX_FLAGS "-std=c++14")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14 -march=native")
+
+#list(APPEND CMAKE_CXX_FLAGS "-std=c++14")
+#list(APPEND CMAKE_CXX_FLAGS "-march=native")
 
 set(PROJECT_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
