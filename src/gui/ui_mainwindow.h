@@ -85,6 +85,7 @@ public:
 
         state_viewer = new QGraphicsView(centralWidget);
         state_viewer->setObjectName(QStringLiteral("state_viewer"));
+        state_viewer->setDragMode(QGraphicsView::ScrollHandDrag);
 
         verticalLayout->addWidget(state_viewer);
 

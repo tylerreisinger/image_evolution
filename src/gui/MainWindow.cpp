@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Image Evolution");
 
     m_gfx_scene = std::make_unique<QGraphicsScene>();
     m_state_render = new QGraphicsPixmapItem();
