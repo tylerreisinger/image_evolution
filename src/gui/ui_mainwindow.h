@@ -21,6 +21,7 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSlider>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
@@ -39,6 +40,9 @@ public:
     QVBoxLayout *verticalLayout;
     QLabel *generation_lbl;
     QGraphicsView *state_viewer;
+    QHBoxLayout *horizontalLayout_4;
+    QLabel *label;
+    QSlider *opacity_slider;
     QHBoxLayout *horizontalLayout_3;
     QLabel *average_score_label;
     QLabel *best_score_label;
@@ -88,6 +92,23 @@ public:
         state_viewer->setDragMode(QGraphicsView::ScrollHandDrag);
 
         verticalLayout->addWidget(state_viewer);
+
+        horizontalLayout_4 = new QHBoxLayout();
+        horizontalLayout_4->setSpacing(6);
+        horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
+        label = new QLabel(centralWidget);
+        label->setObjectName(QStringLiteral("label"));
+
+        horizontalLayout_4->addWidget(label);
+
+        opacity_slider = new QSlider(centralWidget);
+        opacity_slider->setObjectName(QStringLiteral("opacity_slider"));
+        opacity_slider->setOrientation(Qt::Horizontal);
+
+        horizontalLayout_4->addWidget(opacity_slider);
+
+
+        verticalLayout->addLayout(horizontalLayout_4);
 
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setSpacing(6);
@@ -194,6 +215,7 @@ public:
         actionConfigure_Mutations->setText(QApplication::translate("MainWindow", "Configure &Mutations", 0));
         action_Initial_Settings->setText(QApplication::translate("MainWindow", "&Initial Settings", 0));
         generation_lbl->setText(QApplication::translate("MainWindow", "Generation #", 0));
+        label->setText(QApplication::translate("MainWindow", "Reference Image Opacity:", 0));
         average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));
         best_score_label->setText(QApplication::translate("MainWindow", "Best Score:", 0));
         state_number_label->setText(QApplication::translate("MainWindow", "State #/#", 0));

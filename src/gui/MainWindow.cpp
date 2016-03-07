@@ -23,7 +23,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_gfx_scene = std::make_unique<QGraphicsScene>();
     m_state_render = new QGraphicsPixmapItem();
+    m_reference_render = new QGraphicsPixmapItem();
     m_gfx_scene->addItem(m_state_render);
+    m_gfx_scene->addItem(m_reference_render);
+    on_opacity_change();
 
     ui->state_viewer->setScene(m_gfx_scene.get());
 
@@ -58,6 +61,8 @@ std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(
  
 void MainWindow::set_target_image(std::unique_ptr<Image> image)
 {
+    auto qimage = image->to_qimage();
+    m_reference_render->setPixmap(QPixmap::fromImage(qimage));
     reset_evolution(std::move(image));
 }
  
@@ -90,6 +95,7 @@ Population MainWindow::make_initial_population(ImageEvolver::GeneratorType& rng)
  
 void MainWindow::setup_signals()
 {
+    //Main GUI
     connect(ui->next_state_button, &QPushButton::clicked,
             this, &MainWindow::next_state_clicked); 
     connect(ui->prev_state_button, &QPushButton::clicked,
@@ -100,6 +106,9 @@ void MainWindow::setup_signals()
 
     connect(ui->toggle_evolution_button, &QPushButton::clicked,
             this, &MainWindow::evolution_toggle_clicked);
+
+    connect(ui->opacity_slider, &QSlider::valueChanged,
+            this, &MainWindow::on_opacity_change);
 
     //Context menu
     //File
@@ -240,6 +249,11 @@ void MainWindow::set_mutator()
 void MainWindow::set_initial_settings()
 {
     m_initial_settings = m_initial_settings_dialog->values(); 
+}
+ 
+void MainWindow::on_opacity_change()
+{
+    m_reference_render->setOpacity(ui->opacity_slider->value() / 100.0); 
 }
  
 void MainWindow::handle_save_state_image()

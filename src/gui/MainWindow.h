@@ -58,6 +58,7 @@ private:
     void set_mutator();
     void set_initial_settings();
 
+    void on_opacity_change();
     void on_save_state_image(bool);
     void handle_save_state_image();
 
@@ -75,6 +76,7 @@ private:
     Ui::MainWindow* ui; 
     std::unique_ptr<QGraphicsScene> m_gfx_scene;
     QGraphicsPixmapItem* m_state_render;
+    QGraphicsPixmapItem* m_reference_render = nullptr;
     std::unique_ptr<GuiBridge> m_bridge;
     EvolutionDriver* m_driver;
     std::unique_ptr<Image> m_target_image;
