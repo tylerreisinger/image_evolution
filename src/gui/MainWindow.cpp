@@ -48,9 +48,7 @@ std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(
 {
     auto driver = std::make_unique<EvolutionDriver>();
 
-    m_target_image = std::move(image);
-
-    driver->set_target_image(m_target_image->clone());
+    driver->set_target_image(std::move(image));
 
     auto start_pop = make_initial_population(driver->get_rng());
 
@@ -75,7 +73,7 @@ void MainWindow::update_gfx()
 {
     auto& draw_state = m_display_pop[m_display_state_idx];  
     
-    auto state_render = m_driver->evolver().render_state(draw_state); 
+    auto state_render = m_driver->render_state(draw_state); 
 
     QImage state_img = state_render->to_qimage();
 

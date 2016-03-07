@@ -79,7 +79,6 @@ private:
     QGraphicsPixmapItem* m_reference_render = nullptr;
     std::unique_ptr<GuiBridge> m_bridge;
     EvolutionDriver* m_driver;
-    std::unique_ptr<Image> m_target_image;
 
     std::unique_ptr<MutateDialog> m_mutate_dialog;
     std::unique_ptr<InitialSettingsDialog> m_initial_settings_dialog;

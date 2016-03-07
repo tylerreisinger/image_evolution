@@ -193,3 +193,32 @@ double image_difference_slow(const Image& ref_image, const Image& test_image)
     return image_dist;
 }
  
+std::unique_ptr<Image> Image::shrink_to_next_mipmap() const
+{
+    int new_width = width()>>1;
+    int new_height = height()>>1;
+
+    std::vector<float> new_pixels(new_width*new_height*COMPONENT_COUNT);
+
+    int stride = width()*COMPONENT_COUNT;
+
+    for(int y = 0; y < new_height; ++y) {
+        for(int x = 0; x < new_width; ++x) {
+            auto base_index = ((y*2)*width() + x*2)*COMPONENT_COUNT;
+
+            for(int component = 0; component < COMPONENT_COUNT; ++component) {
+                float value = m_bytes[base_index]
+                    + m_bytes[base_index+COMPONENT_COUNT] 
+                    + m_bytes[base_index+stride] 
+                    + m_bytes[base_index+stride+COMPONENT_COUNT];
+                value /= COMPONENT_COUNT;
+
+                base_index += 1;
+                new_pixels[(y*new_width + x)*COMPONENT_COUNT + component] = value;
+            }
+        }
+    }
+
+    return std::make_unique<Image>(std::move(new_pixels), new_width, new_height);
+}
+ 

@@ -36,18 +36,16 @@ public:
     void draw_rectangle(float x_min, float y_min, float x_max, float y_max, 
             const Colorf& src_color);
 
-    const float* bytes() const {
-        return m_bytes.data();
-    }
+    const float* bytes() const {return m_bytes.data();}
 
-    float* bytes() {
-        return m_bytes.data();
-    }
+    float* bytes() {return m_bytes.data();}
 
     int width() const {return m_width;}
     int height() const {return m_height;}
 
     int pixel_count() const {return width()*height();}
+
+    std::unique_ptr<Image> shrink_to_next_mipmap() const;
 
     std::unique_ptr<Image> clone() const;
 

@@ -16,6 +16,11 @@ ImageEvolver::ImageEvolver(Population initial_population,
 {
 }
  
+double ImageEvolver::best_score() const
+{
+    return m_population[0].score(); 
+}
+ 
 State::ScoreType ImageEvolver::score_state(const State& state) const
 {
     auto img_copy = m_bg_image->clone();
@@ -146,6 +151,7 @@ void ImageEvolver::set_target_image(std::unique_ptr<Image> target_image)
 {
     m_target_image = std::move(target_image); 
     set_bg_image();
+    update_scores(m_population, true);
 }
  
 State::ScoreType ImageEvolver::compute_total_score()
@@ -184,10 +190,10 @@ void ImageEvolver::set_mutator(std::unique_ptr<Mutator> mutator)
     m_mutator = std::move(mutator); 
 }
  
-void ImageEvolver::update_scores(Population& pop)
+void ImageEvolver::update_scores(Population& pop, bool force)
 {
     for(auto& state : pop) {
-        if(!state.has_score()) {
+        if(!state.has_score() || force) {
             state.set_score(score_state(state));
         }
     }

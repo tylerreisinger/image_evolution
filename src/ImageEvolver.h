@@ -38,6 +38,8 @@ public:
     Population& population() {return m_population;}
     const Population& population() const {return m_population;}
 
+    double best_score() const;
+
     std::size_t population_size() const {return m_population.size();}
 
     int generation_number() const {return m_gen_number;}
@@ -65,14 +67,17 @@ public:
 
     GeneratorType& get_rng() {return m_rng;}
 
+    void apply_state(const State& state, Image& image) const;
+
+    const Colorf& bg_color() const {return m_bg_color;}
+
 protected:
     std::vector<ScoreType> compute_rel_scores(ScoreType total_score);
-    void update_scores(Population& pop);
+    void update_scores(Population& pop, bool force=false);
     void set_bg_image();
     State& select_parent(const std::vector<ScoreType>& rel_scores,
             ScoreType select_pos);
     Population select_survivors(Population& total_pop, int n_way);
-    void apply_state(const State& state, Image& image) const;
 
     std::unique_ptr<Mutator> m_mutator;
 
