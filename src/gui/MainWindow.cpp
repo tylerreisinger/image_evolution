@@ -278,7 +278,7 @@ void MainWindow::handle_save_state_image()
             "Image Files (*.png *.bmp *.jpg)").toStdString();
 
     if(!filename.empty()) {
-        auto img = m_driver->evolver().render_state(selected_state);
+        auto img = m_driver->render_state(selected_state);
 
         if(!save_image(filename, *img)) {
             QMessageBox msg;
