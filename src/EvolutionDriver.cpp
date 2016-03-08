@@ -2,10 +2,14 @@
 
 #include "MipmapCollection.h"
 #include "State.h"
+#include "EvolutionStatistics.h"
 
-EvolutionDriver::EvolutionDriver()
+EvolutionDriver::EvolutionDriver():
+    m_stats(new EvolutionStatistics())
 { 
     m_evolver = std::make_unique<ImageEvolver>();
+
+    m_cur_mipmap_level = m_initial_mipmap_level;
 }
  
 void EvolutionDriver::set_target_image(std::unique_ptr<Image> target_image)
@@ -35,17 +39,32 @@ std::unique_ptr<Image> EvolutionDriver::render_state(const State& state)
 void EvolutionDriver::advance_generation()
 {
     m_evolver->advance_generation(); 
-    if(m_evolver->generation_number() == 1000) {
-        change_active_mipmap_level(1);
-    } else if(m_evolver->generation_number() == 2000) {
-        change_active_mipmap_level(0);
+
+    double score_delta = m_stats->compute_score_delta();
+    double rel_score_delta = score_delta / m_evolver->best_score();
+
+    if(m_evolver->generation_number() % 10 == 0 && m_stats->is_backlog_full()) {
+        std::cout << m_evolver->generation_number() << "\t" <<
+            score_delta << "\t" <<
+            rel_score_delta << std::endl;
+
+
+        double threshold = m_change_threshold_base 
+            * (std::pow(m_change_threshold_multiplier, (m_cur_mipmap_level - 1)));
+        
+        if(m_cur_mipmap_level > m_final_mipmap_level && rel_score_delta < threshold) {
+            change_active_mipmap_level(m_cur_mipmap_level-1);
+        }
     }
+
+    m_stats->new_generation(*m_evolver);
 }
  
 void EvolutionDriver::set_population(Population pop)
 {
     m_evolver->set_population(std::move(pop)); 
-    change_active_mipmap_level(2);
+    change_active_mipmap_level(m_initial_mipmap_level);
+    m_stats->clear_scores();
 }
  
 const Image& EvolutionDriver::current_mipmap_level() const
@@ -57,5 +76,6 @@ void EvolutionDriver::change_active_mipmap_level(int new_level)
 {
     m_cur_mipmap_level = new_level; 
     m_evolver->set_target_image(m_mipmap->get_image_level(m_cur_mipmap_level).clone()); 
+    m_stats->clear_scores();
 }
  

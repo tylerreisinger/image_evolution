@@ -7,6 +7,7 @@
 
 class MipmapCollection;
 class State;
+class EvolutionStatistics;
 
 class EvolutionDriver {
 public:
@@ -40,10 +41,18 @@ public:
 protected:
     void change_active_mipmap_level(int new_level);
 
-    int m_cur_mipmap_level = 2;
+    double m_change_threshold_base = 1e-7;
+    double m_change_threshold_multiplier = 2.0;
+    int m_initial_mipmap_level = 3;
+    int m_final_mipmap_level = 1;
+
+    int m_cur_mipmap_level = 0;
+
     std::unique_ptr<MipmapCollection> m_mipmap;
     std::unique_ptr<ImageEvolver> m_evolver;
     std::unique_ptr<Image> m_full_bg_image;
+
+    std::unique_ptr<EvolutionStatistics> m_stats;
 };
 
 #endif

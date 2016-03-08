@@ -7,8 +7,6 @@ class ImageEvolver;
 
 class EvolutionStatistics {
 public:
-    static constexpr int SCORE_BACKLOG_SIZE = 100;
-
     EvolutionStatistics();
     ~EvolutionStatistics();
 
@@ -19,10 +17,16 @@ public:
 
     void new_generation(const ImageEvolver& evolver);
 
-protected:
     double compute_score_delta();
+    void clear_scores();
 
-    std::deque<double> m_prev_max_scores;
+    bool is_backlog_full() const {return m_prev_max_scores.size() == m_score_backlog_size;}
+
+protected:
+
+    std::deque<double> m_score_deltas;
+    double m_last_score;
+    int m_score_backlog_size = 100;
 };
 
 #endif
