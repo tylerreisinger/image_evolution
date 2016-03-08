@@ -132,7 +132,7 @@ void MutateDialog::setup_signals() {
  
 void MutateDialog::update_ui()
 {
-    ui->mutation_rate_slider->setValue(m_mutator->mutation_rate()*100);
+    ui->mutation_rate_slider->setValue(m_mutator->mutation_rate()*1000);
     ui->mutation_rate_value->setValue(m_mutator->mutation_rate()*100);
 
     ui->element_mutation_slider->setValue(m_mutator->element_mutation_rate()*100);
