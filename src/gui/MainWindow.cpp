@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTimer>
 
 #include "EvolutionDriver.h"
 #include "Image.h"
@@ -28,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_gfx_scene->addItem(m_reference_render);
     on_opacity_change();
 
+    m_update_timer = new QTimer(this);
+    m_update_timer->setSingleShot(true);
+
     ui->state_viewer->setScene(m_gfx_scene.get());
 
     setup_signals();
@@ -36,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     update_simulation_buttons();
     update_state_button_status();
     state_updated();
+    m_update_timer->start(50);
 }
 
 MainWindow::~MainWindow()
@@ -93,6 +98,9 @@ Population MainWindow::make_initial_population(ImageEvolver::GeneratorType& rng)
  
 void MainWindow::setup_signals()
 {
+    connect(m_update_timer, &QTimer::timeout,
+            this, &MainWindow::on_update_tick);
+
     //Main GUI
     connect(ui->next_state_button, &QPushButton::clicked,
             this, &MainWindow::next_state_clicked); 
@@ -143,6 +151,7 @@ void MainWindow::evolution_toggle_clicked()
     if(!m_running) {
         m_running = true;
         m_bridge->resume();
+        
     } else {
         m_running = false;
         m_bridge->pause();
@@ -249,6 +258,14 @@ void MainWindow::set_initial_settings()
     m_initial_settings = m_initial_settings_dialog->values(); 
 }
  
+void MainWindow::on_update_tick()
+{
+    if(m_bridge != nullptr && m_bridge->cur_generation() != m_gen_number) {
+        population_updated();
+    } 
+    m_update_timer->start(50);
+}
+ 
 void MainWindow::on_opacity_change()
 {
     m_reference_render->setOpacity(ui->opacity_slider->value() / 100.0); 
@@ -316,9 +333,6 @@ void MainWindow::reset_evolution(std::unique_ptr<Image> new_image)
     m_bridge = std::make_unique<GuiBridge>(std::move(driver));
     m_driver = &m_bridge->evolution_driver();
     m_driver->evolver().set_mutator(std::make_unique<Mutator>(m_mutator));
-
-    connect(m_bridge.get(), &GuiBridge::population_updated,
-            this, &MainWindow::population_updated);
 
     set_simulation_loaded_state();
     set_active_state(0);

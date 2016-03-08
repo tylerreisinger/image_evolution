@@ -30,7 +30,7 @@ public:
 
     void advance_generation();
 
-    void set_population(Population pop) {m_evolver->set_population(std::move(pop));}
+    void set_population(Population pop);
 
     const Image& current_mipmap_level() const;
 

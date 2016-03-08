@@ -58,6 +58,7 @@ private:
     void set_mutator();
     void set_initial_settings();
 
+    void on_update_tick();
     void on_opacity_change();
     void on_save_state_image(bool);
     void handle_save_state_image();
@@ -85,6 +86,8 @@ private:
 
     InitialSettings m_initial_settings;
     Mutator m_mutator;
+
+    QTimer* m_update_timer;
 
     Population m_display_pop;
     int m_gen_number = 0;

@@ -42,6 +42,12 @@ void EvolutionDriver::advance_generation()
     }
 }
  
+void EvolutionDriver::set_population(Population pop)
+{
+    m_evolver->set_population(std::move(pop)); 
+    change_active_mipmap_level(2);
+}
+ 
 const Image& EvolutionDriver::current_mipmap_level() const
 {
     return m_mipmap->get_image_level(m_cur_mipmap_level); 
