@@ -23,6 +23,11 @@ void EvolutionStatistics::new_generation(const ImageEvolver& evolver)
  
 double EvolutionStatistics::compute_score_delta()
 {
-    //TODO
+    double total = 0.0;
+
+    for(int i = 0; i < SCORE_BACKLOG_SIZE; ++i) {
+        double weight = (SCORE_BACKLOG_SIZE - i) / SCORE_BACKLOG_SIZE;
+        total = m_prev_max_scores[i]*weight;
+    }
 }
  
