@@ -5,6 +5,11 @@
 
 #ifdef USE_SSE
 
+__m128 abs_ps(__m128 x) {
+    static const __m128 mask = _mm_set_ps1(-0.0f);
+    return _mm_andnot_ps(mask, x);
+}
+
 void draw_rectangle_sse(Image& image, int x_min, int y_min, int x_max, int y_max,
         const Colorf& src_color) {
 
@@ -93,8 +98,8 @@ double image_difference_sse(const Image& ref_image, const Image& test_image) {
     for(int i = 0; i < remainder; ++i) {
         auto idx = num_blocks*BLOCK_SIZE+i;
         __m128 channel_distance = _mm_sub_ps(ref_pixels[idx], test_pixels[idx]);
-        __m128 difference = _mm_mul_ps(channel_distance, channel_distance);
-        partial_component_sums = _mm_add_ps(partial_component_sums, difference);
+        channel_distance = abs_ps(channel_distance);
+        partial_component_sums = _mm_add_ps(partial_component_sums, channel_distance);
     }
     
     __m128 partial_half_sums = _mm_hadd_ps(partial_component_sums, partial_component_sums);
