@@ -18,6 +18,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++14 -march=native")
 
 set(PROJECT_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
+target_compile_definitions(image_evolution PRIVATE USE_SSE USE_FMA)
+
 target_link_libraries(image_evolution Qt5::Widgets)
 target_link_libraries(image_evolution Qt5::Gui)
 target_link_libraries(image_evolution pthread)
