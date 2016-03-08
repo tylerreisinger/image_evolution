@@ -3,6 +3,7 @@
 #include <QImage>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 
 Image::Image(std::vector<float> pixels, int width, int height):
     m_bytes(std::move(pixels)), m_width(width), m_height(height)
@@ -103,8 +104,8 @@ double image_difference(const Image& ref_image, const Image& test_image)
  
 float channel_distance(float channel1, float channel2)
 {
-    auto diff = channel1-channel2;
-    return diff*diff; 
+    auto diff = std::abs(channel1-channel2);
+    return diff;
 }
  
 bool save_image(const std::string& filename, const Image& image)
