@@ -1,9 +1,7 @@
 #include "Image.h"
 
-#include <x86intrin.h>
 
-#define USE_SSE
-#define USE_FMA
+#include <x86intrin.h>
 
 #ifdef USE_SSE
 
