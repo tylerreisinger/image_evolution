@@ -20,7 +20,11 @@ State::ScoreType ImageEvolver::score_state(const State& state) const
 {
     auto img_copy = m_bg_image->clone();
     apply_state(state, *img_copy);
-    return image_difference(*m_target_image, *img_copy);
+
+    State::ScoreType normalization_factor = 
+        m_target_image->width() * m_target_image->height() * 3;
+
+    return image_difference(*m_target_image, *img_copy) / normalization_factor;
 }
  
 void ImageEvolver::apply_state(const State& state, Image& image) const
