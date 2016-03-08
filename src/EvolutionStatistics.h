@@ -24,8 +24,8 @@ public:
 
 protected:
 
+    std::deque<double> m_prev_max_scores;
     std::deque<double> m_score_deltas;
-    double m_last_score;
     int m_score_backlog_size = 100;
 };
 
