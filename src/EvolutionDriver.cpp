@@ -44,8 +44,6 @@ void EvolutionDriver::advance_generation()
     if(m_scaling_controller != nullptr) {
         if(m_scaling_controller->should_enlarge(*m_stats, *m_evolver,
                 m_cur_mipmap_level)) {
-            std::cout << "===== Setting mipmap level " << m_cur_mipmap_level-1 << " =====" 
-                << std::endl;
             change_active_mipmap_level(m_cur_mipmap_level-1); 
         }
     }
