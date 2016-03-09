@@ -11,11 +11,16 @@
 #include "Population.h"
 #include "ImageEvolver.h"
 #include "InitialSettings.h"
+#include "MipmapSettings.h"
 
 class EvolutionDriver;
 
 class MutateDialog;
 class InitialSettingsDialog;
+class MipmapDialog;
+class AdaptiveScalingController;
+
+class QLabel;
 
 namespace Ui {
     class MainWindow;
@@ -35,6 +40,8 @@ public:
 
     void advance_generation();
 private:
+    void setup_statusbar();
+
     void update_gfx();
     void load_population();
 
@@ -55,13 +62,18 @@ private:
 
     void open_mutation_config();
     void open_initial_settings_dialog();
+    void open_mipmap_settings_dialog();
     void set_mutator();
     void set_initial_settings();
+    void set_mipmap_settings();
 
     void on_update_tick();
     void on_opacity_change();
     void on_save_state_image(bool);
     void handle_save_state_image();
+
+    std::unique_ptr<AdaptiveScalingController> make_scaling_controller(
+            const MipmapSettings& settings) const;
 
     void reset_evolution(std::unique_ptr<Image> new_image);
 
@@ -83,11 +95,17 @@ private:
 
     std::unique_ptr<MutateDialog> m_mutate_dialog;
     std::unique_ptr<InitialSettingsDialog> m_initial_settings_dialog;
+    std::unique_ptr<MipmapDialog> m_mipmap_dialog;
 
     InitialSettings m_initial_settings;
+    MipmapSettings m_mipmap_settings;
     Mutator m_mutator;
 
     QTimer* m_update_timer;
+
+    //Status bar controls
+    QLabel* m_mipmap_label;
+    QLabel* m_open_file_label;
 
     Population m_display_pop;
     int m_gen_number = 0;

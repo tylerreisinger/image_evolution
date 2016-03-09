@@ -30,7 +30,7 @@ void EvolutionStatistics::new_generation(const ImageEvolver& evolver)
     }
 }
  
-double EvolutionStatistics::compute_score_delta()
+double EvolutionStatistics::compute_score_delta() const
 {
     double total = 0.0;
     double total_weight = 0.0;

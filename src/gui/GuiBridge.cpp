@@ -94,6 +94,18 @@ void GuiBridge::reinitialize_population(Population population)
     update_current_state(); 
 }
  
+void GuiBridge::set_active_mipmap_level(int new_level)
+{
+    bool was_running = m_run;
+    restart();
+
+    m_driver->change_active_mipmap_level(new_level);
+    start_thread();
+    if(was_running) {
+        resume();
+    }
+}
+ 
 void GuiBridge::thread_func()
 {
     while(true) {

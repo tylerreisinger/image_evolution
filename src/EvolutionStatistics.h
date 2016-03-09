@@ -17,7 +17,7 @@ public:
 
     void new_generation(const ImageEvolver& evolver);
 
-    double compute_score_delta();
+    double compute_score_delta() const;
     void clear_scores();
 
     bool is_backlog_full() const {return m_prev_max_scores.size() == m_score_backlog_size;}

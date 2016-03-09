@@ -9,11 +9,14 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTimer>
+#include <QLabel>
 
 #include "EvolutionDriver.h"
 #include "Image.h"
 #include "MutateDialog.h"
 #include "InitialSettingsDialog.h"
+#include "MipmapDialog.h"
+#include "AdaptiveScalingController.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Image Evolution");
+    setup_statusbar();
 
     m_gfx_scene = std::make_unique<QGraphicsScene>();
     m_state_render = new QGraphicsPixmapItem();
@@ -52,7 +56,12 @@ std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(
         std::unique_ptr<Image> image)
 {
     auto driver = std::make_unique<EvolutionDriver>();
+    
+    if(m_mipmap_settings.is_adaptive_scaling_enabled) {
+        driver->set_scaling_controller(make_scaling_controller(m_mipmap_settings));
+    }
 
+    driver->change_active_mipmap_level(m_mipmap_settings.initial_mipmap_level);
     driver->set_target_image(std::move(image));
 
     auto start_pop = make_initial_population(driver->get_rng());
@@ -72,6 +81,15 @@ void MainWindow::set_target_image(std::unique_ptr<Image> image)
 void MainWindow::advance_generation()
 {
     m_bridge->step(); 
+}
+ 
+void MainWindow::setup_statusbar()
+{ 
+    m_open_file_label = new QLabel();
+    m_mipmap_label = new QLabel();
+
+    ui->status_bar->addPermanentWidget(m_mipmap_label);
+    ui->status_bar->addPermanentWidget(m_open_file_label);
 }
  
 void MainWindow::update_gfx()
@@ -133,6 +151,9 @@ void MainWindow::setup_signals()
 
     connect(ui->action_Initial_Settings, &QAction::triggered,
             this, &MainWindow::open_initial_settings_dialog);
+
+    connect(ui->action_Mipmap_Settings, &QAction::triggered,
+            this, &MainWindow::open_mipmap_settings_dialog);
 }
  
 void MainWindow::next_state_clicked()
@@ -245,6 +266,20 @@ void MainWindow::open_initial_settings_dialog()
     m_initial_settings_dialog->show();
 }
  
+void MainWindow::open_mipmap_settings_dialog()
+{
+    if(m_mipmap_dialog == nullptr) {
+        m_mipmap_dialog = 
+            std::make_unique<MipmapDialog>(m_mipmap_settings);
+
+        connect(m_mipmap_dialog.get(), &MipmapDialog::values_accepted,
+                this, &MainWindow::set_mipmap_settings);
+    } 
+
+    m_mipmap_dialog->set_values(m_mipmap_settings);
+    m_mipmap_dialog->show();
+}
+ 
 void MainWindow::set_mutator()
 {
     m_mutator = m_mutate_dialog->mutator();
@@ -256,6 +291,21 @@ void MainWindow::set_mutator()
 void MainWindow::set_initial_settings()
 {
     m_initial_settings = m_initial_settings_dialog->values(); 
+}
+ 
+void MainWindow::set_mipmap_settings()
+{
+    m_mipmap_settings = m_mipmap_dialog->values(); 
+
+    auto scaling_controller = make_scaling_controller(m_mipmap_settings);
+    if(has_loaded_simulation()) {
+        if(m_mipmap_settings.is_adaptive_scaling_enabled) {
+            m_driver->set_scaling_controller(std::move(scaling_controller));
+        } else {
+            m_driver->set_scaling_controller(nullptr);
+        }
+        m_bridge->set_active_mipmap_level(m_mipmap_settings.current_mipmap_level);
+    }
 }
  
 void MainWindow::on_update_tick()
@@ -316,6 +366,7 @@ void MainWindow::on_open_image(bool)
             msg.exec();
         } else {
             set_target_image(std::move(img));
+            m_open_file_label->setText(filename.c_str());
         }
 
     }
@@ -341,6 +392,17 @@ void MainWindow::reset_evolution(std::unique_ptr<Image> new_image)
     update_simulation_buttons();
 
     population_updated();
+}
+ 
+std::unique_ptr<AdaptiveScalingController> MainWindow::make_scaling_controller(
+        const MipmapSettings& settings) const {
+    auto scaling_controller = std::make_unique<AdaptiveScalingController>();
+    scaling_controller->set_enlarge_threshold_base(settings.enlarge_threshold_base)
+        .set_initial_mipmap_level(settings.initial_mipmap_level)
+        .set_final_mipmap_level(settings.final_mipmap_level)
+        .set_enlarge_threshold_multiplier(2.0);
+
+    return scaling_controller;
 }
  
 void MainWindow::update_simulation_buttons()

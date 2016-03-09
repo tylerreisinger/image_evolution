@@ -36,6 +36,7 @@ public:
     QAction *action_Reset;
     QAction *actionConfigure_Mutations;
     QAction *action_Initial_Settings;
+    QAction *action_Mipmap_Settings;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
     QLabel *generation_lbl;
@@ -59,7 +60,7 @@ public:
     QMenuBar *menuBar;
     QMenu *menu_File;
     QMenu *menu_Simulation;
-    QStatusBar *statusBar;
+    QStatusBar *status_bar;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -76,6 +77,8 @@ public:
         actionConfigure_Mutations->setObjectName(QStringLiteral("actionConfigure_Mutations"));
         action_Initial_Settings = new QAction(MainWindow);
         action_Initial_Settings->setObjectName(QStringLiteral("action_Initial_Settings"));
+        action_Mipmap_Settings = new QAction(MainWindow);
+        action_Mipmap_Settings->setObjectName(QStringLiteral("action_Mipmap_Settings"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         verticalLayout = new QVBoxLayout(centralWidget);
@@ -103,6 +106,7 @@ public:
 
         opacity_slider = new QSlider(centralWidget);
         opacity_slider->setObjectName(QStringLiteral("opacity_slider"));
+        opacity_slider->setMaximum(100);
         opacity_slider->setOrientation(Qt::Horizontal);
 
         horizontalLayout_4->addWidget(opacity_slider);
@@ -189,9 +193,9 @@ public:
         menu_Simulation = new QMenu(menuBar);
         menu_Simulation->setObjectName(QStringLiteral("menu_Simulation"));
         MainWindow->setMenuBar(menuBar);
-        statusBar = new QStatusBar(MainWindow);
-        statusBar->setObjectName(QStringLiteral("statusBar"));
-        MainWindow->setStatusBar(statusBar);
+        status_bar = new QStatusBar(MainWindow);
+        status_bar->setObjectName(QStringLiteral("status_bar"));
+        MainWindow->setStatusBar(status_bar);
 
         menuBar->addAction(menu_File->menuAction());
         menuBar->addAction(menu_Simulation->menuAction());
@@ -200,6 +204,7 @@ public:
         menu_Simulation->addAction(action_Reset);
         menu_Simulation->addAction(actionConfigure_Mutations);
         menu_Simulation->addAction(action_Initial_Settings);
+        menu_Simulation->addAction(action_Mipmap_Settings);
 
         retranslateUi(MainWindow);
 
@@ -214,6 +219,7 @@ public:
         action_Reset->setText(QApplication::translate("MainWindow", "&Reset", 0));
         actionConfigure_Mutations->setText(QApplication::translate("MainWindow", "Configure &Mutations", 0));
         action_Initial_Settings->setText(QApplication::translate("MainWindow", "&Initial Settings", 0));
+        action_Mipmap_Settings->setText(QApplication::translate("MainWindow", "&Mipmap Settings", 0));
         generation_lbl->setText(QApplication::translate("MainWindow", "Generation #", 0));
         label->setText(QApplication::translate("MainWindow", "Reference Image Opacity:", 0));
         average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));

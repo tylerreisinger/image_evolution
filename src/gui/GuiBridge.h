@@ -44,6 +44,8 @@ public:
 
     void reinitialize_population(Population population);
 
+    void set_active_mipmap_level(int new_level);
+
 signals:
     void population_updated();
     void stopped();

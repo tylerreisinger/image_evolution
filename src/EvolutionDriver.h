@@ -8,6 +8,7 @@
 class MipmapCollection;
 class State;
 class EvolutionStatistics;
+class AdaptiveScalingController;
 
 class EvolutionDriver {
 public:
@@ -35,18 +36,19 @@ public:
 
     const Image& current_mipmap_level() const;
 
+    void set_scaling_controller(std::unique_ptr<AdaptiveScalingController> controller);
+
     GeneratorType& get_rng() {return m_evolver->get_rng();}
 
     ImageEvolver& evolver() {return *m_evolver;}
-protected:
-    void change_active_mipmap_level(int new_level);
 
-    double m_change_threshold_base = 1e-7;
-    double m_change_threshold_multiplier = 2.0;
-    int m_initial_mipmap_level = 3;
-    int m_final_mipmap_level = 1;
+    void change_active_mipmap_level(int new_level);
+protected:
 
     int m_cur_mipmap_level = 0;
+    int m_initial_mipmap_level = 3;
+
+    std::unique_ptr<AdaptiveScalingController> m_scaling_controller;
 
     std::unique_ptr<MipmapCollection> m_mipmap;
     std::unique_ptr<ImageEvolver> m_evolver;
