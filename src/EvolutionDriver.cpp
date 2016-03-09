@@ -39,22 +39,6 @@ void EvolutionDriver::advance_generation()
 {
     m_evolver->advance_generation(); 
 
-    /*double score_delta = m_stats->compute_score_delta();
-    double rel_score_delta = score_delta / m_evolver->best_score();
-
-    if(m_evolver->generation_number() % 10 == 0 && m_stats->is_backlog_full()) {
-        std::cout << m_evolver->generation_number() << "\t" <<
-            score_delta << "\t" <<
-            rel_score_delta << std::endl;
-
-
-        double threshold = m_change_threshold_base 
-            * (std::pow(m_change_threshold_multiplier, (m_cur_mipmap_level - 1)));
-        
-        if(m_cur_mipmap_level > m_final_mipmap_level && rel_score_delta < threshold) {
-            change_active_mipmap_level(m_cur_mipmap_level-1);
-        }
-    }*/
 
     if(m_scaling_controller != nullptr) {
         if(m_scaling_controller->should_enlarge(*m_stats, *m_evolver,
