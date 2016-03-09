@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent) :
     update_simulation_buttons();
     update_state_button_status();
     state_updated();
-    m_update_timer->start(50);
+    m_update_timer->start(m_update_delay_ms);
 }
 
 MainWindow::~MainWindow()
@@ -313,7 +313,7 @@ void MainWindow::on_update_tick()
     if(m_bridge != nullptr && m_bridge->cur_generation() != m_gen_number) {
         population_updated();
     } 
-    m_update_timer->start(50);
+    m_update_timer->start(m_update_delay_ms);
 }
  
 void MainWindow::on_opacity_change()

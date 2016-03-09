@@ -111,6 +111,8 @@ private:
     int m_gen_number = 0;
     int m_display_state_idx = 0;
     bool m_running = false;
+
+    int m_update_delay_ms = 50;
 };
 
 #endif // MAINWINDOW_H
