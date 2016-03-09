@@ -15,6 +15,7 @@ EvolutionDriver::EvolutionDriver():
 void EvolutionDriver::set_target_image(std::unique_ptr<Image> target_image)
 {
     m_mipmap = std::make_unique<MipmapCollection>(std::move(target_image));
+    change_active_mipmap_level(m_cur_mipmap_level);
     m_evolver->set_target_image(m_mipmap->get_image_level(m_cur_mipmap_level).clone()); 
 
     const auto& full_img = m_mipmap->full_image();
@@ -72,6 +73,9 @@ void EvolutionDriver::set_scaling_controller(
  
 void EvolutionDriver::change_active_mipmap_level(int new_level)
 {
+    if(m_mipmap != nullptr) {
+        new_level = std::min(new_level, static_cast<int>(m_mipmap->num_levels()-1));
+    }
     if(m_cur_mipmap_level != new_level) {
         m_cur_mipmap_level = new_level; 
         if(m_mipmap != nullptr) {
