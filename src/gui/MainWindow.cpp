@@ -62,7 +62,11 @@ std::unique_ptr<EvolutionDriver> MainWindow::initialize_evolution(
         driver->set_scaling_controller(make_scaling_controller(m_mipmap_settings));
     }
 
-    driver->change_active_mipmap_level(m_mipmap_settings.initial_mipmap_level);
+    int mipmap_level = m_mipmap_settings.current_mipmap_level;
+    if(m_mipmap_settings.is_adaptive_scaling_enabled) {
+        mipmap_level = m_mipmap_settings.initial_mipmap_level;
+    } 
+    driver->change_active_mipmap_level(mipmap_level);
     driver->set_target_image(std::move(image));
 
     auto start_pop = make_initial_population(driver->get_rng());
