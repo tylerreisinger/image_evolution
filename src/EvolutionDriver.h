@@ -36,6 +36,7 @@ public:
 
     const Image& current_mipmap_image() const;
     int current_mipmap_level() const {return m_cur_mipmap_level;}
+    int max_mipmap_level() const;
 
     void set_scaling_controller(std::unique_ptr<AdaptiveScalingController> controller);
 
@@ -44,6 +45,8 @@ public:
     ImageEvolver& evolver() {return *m_evolver;}
 
     void change_active_mipmap_level(int new_level);
+
+    const EvolutionStatistics& evolution_statistics() const {return *m_stats;}
 protected:
 
     int m_cur_mipmap_level = 0;

@@ -47,6 +47,9 @@ public:
     QHBoxLayout *horizontalLayout_3;
     QLabel *average_score_label;
     QLabel *best_score_label;
+    QHBoxLayout *horizontalLayout_5;
+    QLabel *score_change_label;
+    QLabel *mipmap_label;
     QHBoxLayout *horizontalLayout_2;
     QLabel *state_number_label;
     QLabel *state_score_label;
@@ -129,6 +132,22 @@ public:
 
 
         verticalLayout->addLayout(horizontalLayout_3);
+
+        horizontalLayout_5 = new QHBoxLayout();
+        horizontalLayout_5->setSpacing(6);
+        horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
+        score_change_label = new QLabel(centralWidget);
+        score_change_label->setObjectName(QStringLiteral("score_change_label"));
+
+        horizontalLayout_5->addWidget(score_change_label);
+
+        mipmap_label = new QLabel(centralWidget);
+        mipmap_label->setObjectName(QStringLiteral("mipmap_label"));
+
+        horizontalLayout_5->addWidget(mipmap_label);
+
+
+        verticalLayout->addLayout(horizontalLayout_5);
 
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
@@ -224,6 +243,8 @@ public:
         label->setText(QApplication::translate("MainWindow", "Reference Image Opacity:", 0));
         average_score_label->setText(QApplication::translate("MainWindow", "Average Score:", 0));
         best_score_label->setText(QApplication::translate("MainWindow", "Best Score:", 0));
+        score_change_label->setText(QApplication::translate("MainWindow", "Score Change:", 0));
+        mipmap_label->setText(QApplication::translate("MainWindow", "Mipmap Level:", 0));
         state_number_label->setText(QApplication::translate("MainWindow", "State #/#", 0));
         state_score_label->setText(QApplication::translate("MainWindow", "State Score", 0));
         prev_state_button->setText(QApplication::translate("MainWindow", "Previous State", 0));

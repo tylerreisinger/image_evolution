@@ -17,6 +17,7 @@
 #include "InitialSettingsDialog.h"
 #include "MipmapDialog.h"
 #include "AdaptiveScalingController.h"
+#include "EvolutionStatistics.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -220,20 +221,8 @@ void MainWindow::state_updated()
 void MainWindow::population_updated()
 {
     load_population();
-    std::stringstream generation_text;
-    generation_text << "Generation #" << m_gen_number;
     
-    ui->generation_lbl->setText(generation_text.str().c_str());
-
-    auto avg_score = m_display_pop.total_score() / m_display_pop.size();
-
-    std::stringstream avg_score_text;
-    avg_score_text << "Average Score: " << avg_score;
-    ui->average_score_label->setText(avg_score_text.str().c_str());
-
-    std::stringstream best_score_text;
-    best_score_text << "Best Score: " << m_display_pop[0].score();
-    ui->best_score_label->setText(best_score_text.str().c_str());
+    update_population_info_display();
 
     state_updated();
     update_gfx();
@@ -445,5 +434,39 @@ void MainWindow::set_simulation_loaded_state()
 
     ui->next_generation_button->setEnabled(true);
     ui->toggle_evolution_button->setEnabled(true);
+}
+ 
+void MainWindow::update_population_info_display()
+{
+    auto avg_score = m_display_pop.total_score() / m_display_pop.size();
+
+    std::stringstream generation_text;
+    generation_text << "Generation #" << m_gen_number;
+
+    ui->generation_lbl->setText(generation_text.str().c_str());
+
+    std::stringstream avg_score_text;
+    avg_score_text << "Average Score: " << avg_score;
+    ui->average_score_label->setText(avg_score_text.str().c_str());
+
+    std::stringstream best_score_text;
+    best_score_text << "Best Score: " << m_display_pop[0].score();
+    ui->best_score_label->setText(best_score_text.str().c_str());
+
+    double rel_score_delta = m_driver->evolution_statistics().compute_score_delta()
+        / m_driver->evolver().best_score();
+
+    if(std::isnan(rel_score_delta)) {
+        rel_score_delta = 0;
+    }
+
+    std::stringstream score_change_text;
+    score_change_text << "Score Change: " << rel_score_delta;
+    ui->score_change_label->setText(score_change_text.str().c_str());
+
+    std::stringstream mipmap_level_text;
+    mipmap_level_text << "Mipmap Level: " << m_driver->current_mipmap_level()
+        << "/" << m_driver->max_mipmap_level();
+    ui->mipmap_label->setText(mipmap_level_text.str().c_str());
 }
  

@@ -69,6 +69,11 @@ void EvolutionDriver::set_scaling_controller(
     m_scaling_controller = std::move(controller);
 }
  
+int EvolutionDriver::max_mipmap_level() const
+{
+    return m_mipmap->num_levels() - 1; 
+}
+ 
 void EvolutionDriver::change_active_mipmap_level(int new_level)
 {
     if(m_mipmap != nullptr) {

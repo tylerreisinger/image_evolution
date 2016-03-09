@@ -84,6 +84,8 @@ private:
     void set_simulation_unloaded_state();
     void set_simulation_loaded_state();
 
+    void update_population_info_display();
+
     std::unique_ptr<EvolutionDriver> initialize_evolution(std::unique_ptr<Image> image);
 
     Ui::MainWindow* ui; 
