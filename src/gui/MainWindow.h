@@ -104,7 +104,6 @@ private:
     QTimer* m_update_timer;
 
     //Status bar controls
-    QLabel* m_mipmap_label;
     QLabel* m_open_file_label;
 
     Population m_display_pop;

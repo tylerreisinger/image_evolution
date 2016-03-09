@@ -86,10 +86,8 @@ void MainWindow::advance_generation()
 void MainWindow::setup_statusbar()
 { 
     m_open_file_label = new QLabel();
-    m_mipmap_label = new QLabel();
 
-    ui->status_bar->addPermanentWidget(m_mipmap_label);
-    ui->status_bar->addPermanentWidget(m_open_file_label);
+    ui->status_bar->addWidget(m_open_file_label);
 }
  
 void MainWindow::update_gfx()
