@@ -34,7 +34,8 @@ public:
 
     void set_population(Population pop);
 
-    const Image& current_mipmap_level() const;
+    const Image& current_mipmap_image() const;
+    int current_mipmap_level() const {return m_cur_mipmap_level;}
 
     void set_scaling_controller(std::unique_ptr<AdaptiveScalingController> controller);
 

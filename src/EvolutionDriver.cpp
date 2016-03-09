@@ -58,7 +58,7 @@ void EvolutionDriver::set_population(Population pop)
     m_stats->clear_scores();
 }
  
-const Image& EvolutionDriver::current_mipmap_level() const
+const Image& EvolutionDriver::current_mipmap_image() const
 {
     return m_mipmap->get_image_level(m_cur_mipmap_level); 
 }

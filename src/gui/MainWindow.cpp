@@ -276,6 +276,7 @@ void MainWindow::open_mipmap_settings_dialog()
                 this, &MainWindow::set_mipmap_settings);
     } 
 
+    m_mipmap_settings.current_mipmap_level = m_driver->current_mipmap_level();
     m_mipmap_dialog->set_values(m_mipmap_settings);
     m_mipmap_dialog->show();
 }
