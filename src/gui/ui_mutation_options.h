@@ -62,7 +62,7 @@ public:
     {
         if (MutateDialog->objectName().isEmpty())
             MutateDialog->setObjectName(QStringLiteral("MutateDialog"));
-        MutateDialog->resize(556, 277);
+        MutateDialog->resize(556, 349);
         verticalLayout = new QVBoxLayout(MutateDialog);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
         gridLayout = new QGridLayout();
@@ -120,7 +120,7 @@ public:
         mutation_rate_value->setButtonSymbols(QAbstractSpinBox::PlusMinus);
         mutation_rate_value->setProperty("showGroupSeparator", QVariant(false));
         mutation_rate_value->setSuffix(QStringLiteral("%"));
-        mutation_rate_value->setDecimals(1);
+        mutation_rate_value->setDecimals(2);
         mutation_rate_value->setMaximum(100);
         mutation_rate_value->setSingleStep(0.1);
 
